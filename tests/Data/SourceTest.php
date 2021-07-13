@@ -32,4 +32,31 @@ class SourceTest extends TestCase
         self::assertEquals($type, $source->type);
         self::assertEquals($data, $source->data);
     }
+
+    public function testToString()
+    {
+        $id = 'test';
+        $type = 'foobar';
+        $data = [
+            'baz' => 'qux',
+            'quuz' => 'quuz',
+        ];
+
+        $source = new Source($id, $type, $data);
+
+        self::assertEquals($id . '||' . $type, (string) $source);
+    }
+
+    public function testFromString()
+    {
+        $id = 'test';
+        $type = 'foobar';
+        $string = $id . '||' . $type;
+
+        $actual = Source::fromString($string);
+
+        self::assertEquals($id, $actual->id);
+        self::assertEquals($type, $actual->type);
+        self::assertEmpty($actual->data);
+    }
 }
