@@ -363,7 +363,7 @@ class AggregatorTest extends TestCase
             'getFeedQuery' => $query,
             'getPreProcessors' => $preProcessors,
             'getPostProcessors' => [],
-            'truncateItems' => true,
+            'doManualPagination' => false,
         ]);
 
         $storeItems = [
@@ -394,18 +394,21 @@ class AggregatorTest extends TestCase
 
     public function testAggregateOffsetItems()
     {
+        $count = 2;
+        $offset = 1;
+
         $source1 = $this->createMock(Source::class);
         $source2 = $this->createMock(Source::class);
-        $query = new Query([$source1, $source2], null, null);
+        $query = new Query([$source1, $source2], null, null, $count, $offset);
+        $storeQuery = new Query([$source1, $source2], null, null, null, 0);
         $store = $this->createMock(Store::class);
         $feed = $this->createMock(Feed::class);
 
-        $strategy = $this->createConfiguredMock(AggregationStrategy::class, [
-            'getFeedQuery' => $query,
-            'getPreProcessors' => [],
-            'getPostProcessors' => [],
-            'offsetItems' => true,
-        ]);
+        $strategy = $this->createMock(AggregationStrategy::class);
+        $strategy->expects($this->once())->method('getFeedQuery')->with($feed, $count, $offset)->willReturn($query);
+        $strategy->expects($this->once())->method('getPreProcessors')->with($feed, $query)->willReturn([]);
+        $strategy->expects($this->once())->method('getPostProcessors')->with($feed, $query)->willReturn([]);
+        $strategy->expects($this->once())->method('doManualPagination')->with($feed, $query)->willReturn(true);
 
         $storeItems = [
             new Item('1', 1, [$source1]),
@@ -416,13 +419,12 @@ class AggregatorTest extends TestCase
         $finalItems = [
             $storeItems[1],
             $storeItems[2],
-            $storeItems[3],
         ];
 
-        $store->expects($this->once())->method('query')->with($query)->willReturn($storeItems);
+        $store->expects($this->once())->method('query')->with($storeQuery)->willReturn($storeItems);
 
         $aggregator = new Aggregator($store, $strategy);
-        $result = $aggregator->aggregate($feed, null, 1);
+        $result = $aggregator->aggregate($feed, $count, $offset);
 
         self::assertSame($finalItems, $result->items);
         self::assertEquals(count($storeItems), $result->total);

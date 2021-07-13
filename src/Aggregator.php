@@ -9,6 +9,7 @@ use RebelCode\IrisEngine\Aggregator\AggregationStrategy;
 use RebelCode\IrisEngine\Data\Feed;
 use RebelCode\IrisEngine\Data\Item;
 use RebelCode\IrisEngine\Exception\StoreException;
+use RebelCode\IrisEngine\Store\Query;
 
 class Aggregator
 {
@@ -38,7 +39,13 @@ class Aggregator
             return new AggregateResult([], 0);
         }
 
-        $items = $this->store->query($query);
+        $manualPagination = $this->strategy->doManualPagination($feed, $query);
+
+        $storeQuery = $manualPagination
+            ? new Query($query->sources, $query->order, $query->condition)
+            : $query;
+
+        $items = $this->store->query($storeQuery);
         $this->removeDuplicates($items);
 
         $preProcessors = $this->strategy->getPreProcessors($feed, $query);
@@ -53,11 +60,10 @@ class Aggregator
             $processor->process($items, $feed, $query);
         }
 
-        if ($this->strategy->offsetItems($feed, $query)) {
-            $items = array_slice($items, $offset);
-        }
-
-        if ($this->strategy->truncateItems($feed, $query)) {
+        if ($manualPagination) {
+            // Apply manual pagination
+            $items = array_slice($items, $query->offset, $query->count);
+        } else {
             // Make sure that the list of items is not greater than the query's count after post-processing
             $count = max(0, $query->count ?? 0);
             if ($count > 0) {

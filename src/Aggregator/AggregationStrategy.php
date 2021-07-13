@@ -42,24 +42,19 @@ interface AggregationStrategy
     public function getPostProcessors(Feed $feed, Query $query): array;
 
     /**
-     * Whether the aggregator should manually offset the items after post-processing and before potential truncation.
+     * Whether the aggregator should apply pagination manually after post-processing.
      *
-     * This is useful if the consumer is unable to include all of their criteria in the query that is returned by
-     * {@link AggregationStrategy::getFeedQuery()}. In those situations, the consumer may need to perform programmatic
-     * filtering on the list of items using pre-processors or post-processors. The offset can be omitted from the
-     * initial query in order to obtain all of the items from the store, and then have the aggregator apply the
-     * offset manually.
+     * This is useful if the consumer is unable to perform all of the necessary filtering using the store query which
+     * is return from {@link AggregationStrategy::getFeedQuery()}. In those situations, the consumer may need to
+     * perform programmatic filtering on the list of items using pre-processors or post-processors. Such consumers
+     * can return true from this method to tell the aggregator to fetch all the items from the store, then apply
+     * pagination manually using the query's count and offset.
      *
-     * @return bool If true, the aggregator will manually apply the offset. If false, no changes will be made.
+     * Note that in these case, the query sent to the store will have a null count and a zero offset, but the queries
+     * provided to the strategy's methods will have the proper count and offset values.
+     *
+     * @return bool If true, the aggregator will manually apply pagination to the list of items. If false, no pagination
+     *              will be applied by the aggregator.
      */
-    public function offsetItems(Feed $feed, Query $query): bool;
-
-    /**
-     * Whether the aggregator should truncate the items after post-processing to ensure that the number of items does
-     * not exceed the query count.
-     *
-     * @return bool If true, the aggregator will truncate the list of items if it's too long. If false, no truncation
-     *              will be performed.
-     */
-    public function truncateItems(Feed $feed, Query $query): bool;
+    public function doManualPagination(Feed $feed, Query $query): bool;
 }
