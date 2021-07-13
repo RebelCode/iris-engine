@@ -55,11 +55,11 @@ class AggregatorTest extends TestCase
         $store->expects($this->once())->method('query')->with($query)->willReturn($items);
 
         foreach ($preProcessors as $processor) {
-            $processor->expects($this->once())->method('process')->with($items);
+            $processor->expects($this->once())->method('process')->with($items, $feed);
         }
 
         foreach ($postProcessors as $processor) {
-            $processor->expects($this->once())->method('process')->with($items);
+            $processor->expects($this->once())->method('process')->with($items, $feed);
         }
 
         $aggregator = new Aggregator($store, $strategy);
@@ -146,11 +146,11 @@ class AggregatorTest extends TestCase
         $store->expects($this->once())->method('query')->with($query)->willReturn($itemsWithDupes);
 
         foreach ($preProcessors as $processor) {
-            $processor->expects($this->once())->method('process')->with($itemsNoDupes);
+            $processor->expects($this->once())->method('process')->with($itemsNoDupes, $feed);
         }
 
         foreach ($postProcessors as $processor) {
-            $processor->expects($this->once())->method('process')->with($itemsNoDupes);
+            $processor->expects($this->once())->method('process')->with($itemsNoDupes, $feed);
         }
 
         $aggregator = new Aggregator($store, $strategy);
@@ -172,7 +172,7 @@ class AggregatorTest extends TestCase
 
         $preProcessors = [
             new class implements ItemProcessor {
-                public function process(array &$items): void
+                public function process(array &$items, Feed $feed): void
                 {
                     unset($items[1]);
                     $items = array_values($items);
@@ -204,9 +204,9 @@ class AggregatorTest extends TestCase
 
         $store->expects($this->once())->method('query')->with($query)->willReturn($storeItems);
 
-        $preProcessors[1]->expects($this->once())->method('process')->with($processedItems);
+        $preProcessors[1]->expects($this->once())->method('process')->with($processedItems, $feed);
         foreach ($postProcessors as $processor) {
-            $processor->expects($this->once())->method('process')->with($processedItems);
+            $processor->expects($this->once())->method('process')->with($processedItems, $feed);
         }
 
         $aggregator = new Aggregator($store, $strategy);
@@ -233,7 +233,7 @@ class AggregatorTest extends TestCase
 
         $postProcessors = [
             new class implements ItemProcessor {
-                public function process(array &$items): void
+                public function process(array &$items, Feed $feed): void
                 {
                     unset($items[1]);
                     $items = array_values($items);
@@ -261,9 +261,9 @@ class AggregatorTest extends TestCase
         $store->expects($this->once())->method('query')->with($query)->willReturn($storeItems);
 
         foreach ($preProcessors as $processor) {
-            $processor->expects($this->once())->method('process')->with($storeItems);
+            $processor->expects($this->once())->method('process')->with($storeItems, $feed);
         }
-        $postProcessors[1]->expects($this->once())->method('process')->with($processedItems);
+        $postProcessors[1]->expects($this->once())->method('process')->with($processedItems, $feed);
 
         $aggregator = new Aggregator($store, $strategy);
         $result = $aggregator->aggregate($feed, $count, $offset);
@@ -283,7 +283,7 @@ class AggregatorTest extends TestCase
         $offset = 3;
 
         $removeProcessor = new class implements ItemProcessor {
-            public function process(array &$items): void
+            public function process(array &$items, Feed $feed): void
             {
                 unset($items[1]);
                 $items = array_values($items);
@@ -321,8 +321,8 @@ class AggregatorTest extends TestCase
 
         $store->expects($this->once())->method('query')->with($query)->willReturn($storeItems);
 
-        $preProcessors[1]->expects($this->once())->method('process')->with($preProcessedItems);
-        $postProcessors[1]->expects($this->once())->method('process')->with($postProcessedItems);
+        $preProcessors[1]->expects($this->once())->method('process')->with($preProcessedItems, $feed);
+        $postProcessors[1]->expects($this->once())->method('process')->with($postProcessedItems, $feed);
 
         $aggregator = new Aggregator($store, $strategy);
         $result = $aggregator->aggregate($feed, $count, $offset);
@@ -349,7 +349,7 @@ class AggregatorTest extends TestCase
 
             public function __construct($newItem) { $this->newItem = $newItem; }
 
-            public function process(array &$items): void
+            public function process(array &$items, Feed $feed): void
             {
                 array_splice($items, 1, 0, [$this->newItem]);
             }
@@ -396,8 +396,8 @@ class AggregatorTest extends TestCase
 
         $store->expects($this->once())->method('query')->with($query)->willReturn($storeItems);
 
-        $preProcessors[1]->expects($this->once())->method('process')->with($preProcessedItems);
-        $postProcessors[1]->expects($this->once())->method('process')->with($postProcessedItems);
+        $preProcessors[1]->expects($this->once())->method('process')->with($preProcessedItems, $feed);
+        $postProcessors[1]->expects($this->once())->method('process')->with($postProcessedItems, $feed);
 
         $aggregator = new Aggregator($store, $strategy);
         $result = $aggregator->aggregate($feed, $count, $offset);

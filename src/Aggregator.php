@@ -43,14 +43,14 @@ class Aggregator
 
         $preProcessors = $this->strategy->getPreProcessors($feed, $query);
         foreach ($preProcessors as $processor) {
-            $processor->process($items);
+            $processor->process($items, $feed);
         }
 
         $total = count($items);
 
         $postProcessors = $this->strategy->getPostProcessors($feed, $query);
         foreach ($postProcessors as $processor) {
-            $processor->process($items);
+            $processor->process($items, $feed);
         }
 
         // Make sure that the list of items is not greater than the query's count after post-processing
