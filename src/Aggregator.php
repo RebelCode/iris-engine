@@ -9,7 +9,6 @@ use RebelCode\IrisEngine\Aggregator\AggregationStrategy;
 use RebelCode\IrisEngine\Data\Feed;
 use RebelCode\IrisEngine\Data\Item;
 use RebelCode\IrisEngine\Exception\StoreException;
-use RebelCode\IrisEngine\Store\Query;
 
 class Aggregator
 {
@@ -54,10 +53,16 @@ class Aggregator
             $processor->process($items, $feed, $query);
         }
 
-        // Make sure that the list of items is not greater than the query's count after post-processing
-        $count = max(0, $query->count ?? 0);
-        if ($count > 0) {
-            $items = array_slice($items, 0, $count);
+        if ($this->strategy->offsetItems($feed, $query)) {
+            $items = array_slice($items, $offset);
+        }
+
+        if ($this->strategy->truncateItems($feed, $query)) {
+            // Make sure that the list of items is not greater than the query's count after post-processing
+            $count = max(0, $query->count ?? 0);
+            if ($count > 0) {
+                $items = array_slice($items, 0, $count);
+            }
         }
 
         return new AggregateResult($items, $total);

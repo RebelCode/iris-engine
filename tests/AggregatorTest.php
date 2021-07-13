@@ -344,32 +344,26 @@ class AggregatorTest extends TestCase
 
         $newItem = new Item('4', 4, [$source1]);
 
-        $addProcessor = new class($newItem) implements ItemProcessor {
-            protected $newItem;
-
-            public function __construct($newItem) {
-                $this->newItem = $newItem;
-            }
-
-            public function process(array &$items, Feed $feed, Query $query): void
-            {
-                array_splice($items, 1, 0, [$this->newItem]);
-            }
-        };
-
         $preProcessors = [
-            $addProcessor,
-            $this->createMock(ItemProcessor::class),
-        ];
-        $postProcessors = [
-            $addProcessor,
-            $this->createMock(ItemProcessor::class),
+            new class($newItem) implements ItemProcessor {
+                protected $newItem;
+
+                public function __construct($newItem) {
+                    $this->newItem = $newItem;
+                }
+
+                public function process(array &$items, Feed $feed, Query $query): void
+                {
+                    array_splice($items, 1, 0, [$this->newItem]);
+                }
+            },
         ];
 
         $strategy = $this->createConfiguredMock(AggregationStrategy::class, [
             'getFeedQuery' => $query,
             'getPreProcessors' => $preProcessors,
-            'getPostProcessors' => $postProcessors,
+            'getPostProcessors' => [],
+            'truncateItems' => true,
         ]);
 
         $storeItems = [
@@ -377,34 +371,60 @@ class AggregatorTest extends TestCase
             new Item('2', 2, [$source2]),
             new Item('3', 3, [$source2]),
         ];
-        $preProcessedItems = [
+        $processedItems = [
             $storeItems[0],
-            $newItem,
-            $storeItems[1],
-            $storeItems[2],
-        ];
-        $postProcessedItems = [
-            $storeItems[0],
-            $newItem,
             $newItem,
             $storeItems[1],
             $storeItems[2],
         ];
         $finalItems = [
-            $postProcessedItems[0],
-            $postProcessedItems[1],
-            $postProcessedItems[2],
+            $processedItems[0],
+            $processedItems[1],
+            $processedItems[2],
         ];
 
         $store->expects($this->once())->method('query')->with($query)->willReturn($storeItems);
-
-        $preProcessors[1]->expects($this->once())->method('process')->with($preProcessedItems, $feed, $query);
-        $postProcessors[1]->expects($this->once())->method('process')->with($postProcessedItems, $feed, $query);
 
         $aggregator = new Aggregator($store, $strategy);
         $result = $aggregator->aggregate($feed, $count, $offset);
 
         self::assertSame($finalItems, $result->items);
-        self::assertEquals(count($preProcessedItems), $result->total);
+        self::assertEquals(count($processedItems), $result->total);
+    }
+
+    public function testAggregateOffsetItems()
+    {
+        $source1 = $this->createMock(Source::class);
+        $source2 = $this->createMock(Source::class);
+        $query = new Query([$source1, $source2], null, null);
+        $store = $this->createMock(Store::class);
+        $feed = $this->createMock(Feed::class);
+
+        $strategy = $this->createConfiguredMock(AggregationStrategy::class, [
+            'getFeedQuery' => $query,
+            'getPreProcessors' => [],
+            'getPostProcessors' => [],
+            'offsetItems' => true,
+        ]);
+
+        $storeItems = [
+            new Item('1', 1, [$source1]),
+            new Item('2', 2, [$source2]),
+            new Item('3', 3, [$source2]),
+            new Item('4', 4, [$source2]),
+        ];
+        $finalItems = [
+            $storeItems[1],
+            $storeItems[2],
+            $storeItems[3],
+        ];
+
+        $store->expects($this->once())->method('query')->with($query)->willReturn($storeItems);
+
+        $aggregator = new Aggregator($store, $strategy);
+        $result = $aggregator->aggregate($feed, null, 1);
+
+        self::assertSame($finalItems, $result->items);
+        self::assertEquals(count($storeItems), $result->total);
     }
 }

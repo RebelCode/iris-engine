@@ -9,6 +9,9 @@ use RebelCode\IrisEngine\Store\Query;
 
 interface AggregationStrategy
 {
+    /**
+     * Retrieves the query that the aggregator will use to obtain the items from the store.
+     */
     public function getFeedQuery(Feed $feed, ?int $count = null, int $offset = 0): ?Query;
 
     /**
@@ -37,4 +40,26 @@ interface AggregationStrategy
      * @return ItemProcessor[]
      */
     public function getPostProcessors(Feed $feed, Query $query): array;
+
+    /**
+     * Whether the aggregator should manually offset the items after post-processing and before potential truncation.
+     *
+     * This is useful if the consumer is unable to include all of their criteria in the query that is returned by
+     * {@link AggregationStrategy::getFeedQuery()}. In those situations, the consumer may need to perform programmatic
+     * filtering on the list of items using pre-processors or post-processors. The offset can be omitted from the
+     * initial query in order to obtain all of the items from the store, and then have the aggregator apply the
+     * offset manually.
+     *
+     * @return bool If true, the aggregator will manually apply the offset. If false, no changes will be made.
+     */
+    public function offsetItems(Feed $feed, Query $query): bool;
+
+    /**
+     * Whether the aggregator should truncate the items after post-processing to ensure that the number of items does
+     * not exceed the query count.
+     *
+     * @return bool If true, the aggregator will truncate the list of items if it's too long. If false, no truncation
+     *              will be performed.
+     */
+    public function truncateItems(Feed $feed, Query $query): bool;
 }
