@@ -69,6 +69,15 @@ class ItemTest extends TestCase
         self::assertEquals($data, $newItem->data);
     }
 
+    public function testWithSameLocalId()
+    {
+        $localId = 'abc';
+        $item = new Item('', $localId, [], []);
+        $newItem = $item->withLocalId($localId);
+
+        self::assertSame($item, $newItem);
+    }
+
     public function testWithSources()
     {
         $id = '123';
@@ -100,6 +109,19 @@ class ItemTest extends TestCase
         self::assertEquals($localId, $newItem->localId);
         self::assertSame($newSources, $newItem->sources);
         self::assertEquals($data, $newItem->data);
+    }
+
+    public function testWithSameSources()
+    {
+        $sources = [
+            $this->createMock(Source::class),
+            $this->createMock(Source::class),
+        ];
+
+        $item = new Item('', 0, $sources, []);
+        $newItem = $item->withSources($sources);
+
+        self::assertSame($item, $newItem);
     }
 
     public function testWithAddedSources()
@@ -134,5 +156,21 @@ class ItemTest extends TestCase
         self::assertEquals($localId, $newItem->localId);
         self::assertSame($expectedSources, $newItem->sources);
         self::assertEquals($data, $newItem->data);
+    }
+
+    public function testWithSameAddedSources()
+    {
+        $sources = [
+            $s1 = $this->createConfiguredMock(Source::class, ['__toString' => 's1']),
+            $s2 = $this->createConfiguredMock(Source::class, ['__toString' => 's2']),
+        ];
+        $newSources = [
+            $s1,
+        ];
+
+        $item = new Item('', 0, $sources, []);
+        $newItem = $item->withAddedSources($newSources);
+
+        self::assertSame($item, $newItem);
     }
 }

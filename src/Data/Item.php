@@ -29,7 +29,7 @@ class Item extends ImmutableDataObject
         parent::__construct($data);
         $this->id = $id;
         $this->localId = $localId;
-        $this->sources = $sources;
+        $this->sources = array_values($sources);
     }
 
     /**
@@ -37,6 +37,10 @@ class Item extends ImmutableDataObject
      */
     public function withLocalId($localId): Item
     {
+        if ($this->localId === $localId) {
+            return $this;
+        }
+
         $clone = clone $this;
         $clone->localId = $localId;
 
@@ -48,6 +52,12 @@ class Item extends ImmutableDataObject
      */
     public function withSources(array $sources): Item
     {
+        $sources = array_values($sources);
+
+        if ($this->sources === $sources) {
+            return $this;
+        }
+
         $clone = clone $this;
         $clone->sources = $sources;
 
@@ -55,19 +65,15 @@ class Item extends ImmutableDataObject
     }
 
     /**
-     * @param Source[] $newSources
+     * @param Source[] $sources
      */
-    public function withAddedSources(array $newSources): Item
+    public function withAddedSources(array $sources): Item
     {
-        $clone = clone $this;
-
-        $allSources = [];
-        foreach (array_merge($this->sources, $newSources) as $source) {
-            $allSources[(string) $source] = $source;
+        $newSources = [];
+        foreach (array_merge($this->sources, $sources) as $source) {
+            $newSources[(string) $source] = $source;
         }
 
-        $clone->sources = array_values($allSources);
-
-        return $clone;
+        return $this->withSources($newSources);
     }
 }
