@@ -31,4 +31,43 @@ class Item extends ImmutableDataObject
         $this->localId = $localId;
         $this->sources = $sources;
     }
+
+    /**
+     * @param int|string|null $localId
+     */
+    public function withLocalId($localId): Item
+    {
+        $clone = clone $this;
+        $clone->localId = $localId;
+
+        return $clone;
+    }
+
+    /**
+     * @param Source[] $sources
+     */
+    public function withSources(array $sources): Item
+    {
+        $clone = clone $this;
+        $clone->sources = $sources;
+
+        return $clone;
+    }
+
+    /**
+     * @param Source[] $newSources
+     */
+    public function withAddedSources(array $newSources): Item
+    {
+        $clone = clone $this;
+
+        $allSources = [];
+        foreach (array_merge($this->sources, $newSources) as $source) {
+            $allSources[(string) $source] = $source;
+        }
+
+        $clone->sources = array_values($allSources);
+
+        return $clone;
+    }
 }
