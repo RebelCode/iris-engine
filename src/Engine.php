@@ -28,12 +28,12 @@ class Engine
     /**
      * Constructor.
      */
-    public function __construct(Fetcher $fetcher, Converter $converter, Aggregator $aggregator, Store $storage)
+    public function __construct(Fetcher $fetcher, Converter $converter, Aggregator $aggregator, Store $store)
     {
         $this->fetcher = $fetcher;
         $this->converter = $converter;
         $this->aggregator = $aggregator;
-        $this->store = $storage;
+        $this->store = $store;
     }
 
     public function getFetcher(): Fetcher
