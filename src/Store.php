@@ -18,9 +18,11 @@ interface Store
      *
      * @param Item $item The item to store.
      *
+     * @return Item The new item with a updated {@link Item::$localId} field.
+     *
      * @throws StoreException If an error occurred.
      */
-    public function insert(Item $item): void;
+    public function insert(Item $item): Item;
 
     /**
      * Inserts multiple items into the store.
@@ -28,11 +30,11 @@ interface Store
      * @param Item[] $items The items to insert.
      * @param int $mode The mode. See {@link Store::THROW_ON_FAIL} and {@link Store::IGNORE_FAIL}.
      *
-     * @return int The number of successful insertions.
+     * @return Item[] The new items with updated {@link Item::$localId} fields.
      *
      * @throws StoreException If an error occurred.
      */
-    public function insertMultiple(array $items, int $mode = self::THROW_ON_FAIL): int;
+    public function insertMultiple(array $items, int $mode = self::THROW_ON_FAIL): array;
 
     /**
      * Retrieves a single item from storage by ID.
