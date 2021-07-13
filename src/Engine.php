@@ -86,9 +86,15 @@ class Engine
     public function import(FetchQuery $query): FetchResult
     {
         $result = $this->fetch($query);
+        $items = $this->store->insertMultiple($result->items);
 
-        $this->store->insertMultiple($result->items);
-
-        return $result;
+        return new FetchResult(
+            $items,
+            $result->source,
+            $result->catalogSize,
+            $result->nextCursor,
+            $result->prevCursor,
+            $result->errors
+        );
     }
 }

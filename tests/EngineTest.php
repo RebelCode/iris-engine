@@ -93,6 +93,12 @@ class EngineTest extends TestCase
             $this->createMock(Item::class),
         ];
 
+        $storedItems = [
+            $this->createMock(Item::class),
+            $this->createMock(Item::class),
+            $this->createMock(Item::class),
+        ];
+
         $cSize = 200;
         $nCursor = 'next';
         $pCursor = 'prev';
@@ -101,11 +107,11 @@ class EngineTest extends TestCase
 
         $fetcher->expects($this->once())->method('fetch')->with($source, $cursor, $count)->willReturn($result);
         $converter->expects($this->once())->method('convertMultiple')->with($items)->willReturn($items);
-        $store->expects($this->once())->method('insertMultiple')->with($items);
+        $store->expects($this->once())->method('insertMultiple')->with($items)->willReturn($storedItems);
 
         $result = $engine->import($query);
 
-        self::assertSame($items, $result->items);
+        self::assertSame($storedItems, $result->items);
         self::assertSame($source, $result->source);
         self::assertEquals($nCursor, $result->nextCursor);
         self::assertEquals($pCursor, $result->prevCursor);
