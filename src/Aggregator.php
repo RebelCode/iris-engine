@@ -30,9 +30,9 @@ class Aggregator
     /**
      * @throws StoreException
      */
-    public function aggregate(Feed $feed): AggregateResult
+    public function aggregate(Feed $feed, ?int $count = null, int $offset = 0): AggregateResult
     {
-        $query = $this->strategy->getFeedQuery($feed);
+        $query = $this->strategy->getFeedQuery($feed, $count, $offset);
 
         if ($query === null) {
             return new AggregateResult([], 0);

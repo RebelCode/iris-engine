@@ -9,7 +9,7 @@ use RebelCode\IrisEngine\Store\Query;
 
 interface AggregationStrategy
 {
-    public function getFeedQuery(Feed $feed): ?Query;
+    public function getFeedQuery(Feed $feed, ?int $count = null, int $offset = 0): ?Query;
 
     /**
      * Retrieves the pre-processors to use for a given feed.

@@ -23,6 +23,8 @@ class AggregatorTest extends TestCase
         $query = new Query([$source1, $source2]);
         $store = $this->createMock(Store::class);
         $feed = $this->createMock(Feed::class);
+        $count = 9;
+        $offset = 3;
 
         $preProcessors = [
             $this->createMock(ItemProcessor::class),
@@ -34,7 +36,7 @@ class AggregatorTest extends TestCase
         ];
 
         $strategy = $this->createMock(AggregationStrategy::class);
-        $strategy->expects($this->once())->method('getFeedQuery')->with($feed)->willReturn($query);
+        $strategy->expects($this->once())->method('getFeedQuery')->with($feed, $count, $offset)->willReturn($query);
         $strategy->expects($this->once())
                  ->method('getPreProcessors')
                  ->with($feed, $query)
@@ -50,7 +52,6 @@ class AggregatorTest extends TestCase
             new Item('3', 3, [$source2]),
         ];
 
-        $strategy->expects($this->once())->method('getFeedQuery')->with($feed)->willReturn($query);
         $store->expects($this->once())->method('query')->with($query)->willReturn($items);
 
         foreach ($preProcessors as $processor) {
@@ -62,7 +63,7 @@ class AggregatorTest extends TestCase
         }
 
         $aggregator = new Aggregator($store, $strategy);
-        $result = $aggregator->aggregate($feed);
+        $result = $aggregator->aggregate($feed, $count, $offset);
 
         self::assertSame($items, $result->items);
         self::assertEquals(count($items), $result->total);
@@ -72,6 +73,8 @@ class AggregatorTest extends TestCase
     {
         $feed = $this->createMock(Feed::class);
         $store = $this->createMock(Store::class);
+        $count = 9;
+        $offset = 3;
 
         $preProcessors = [
             $this->createMock(ItemProcessor::class),
@@ -88,7 +91,6 @@ class AggregatorTest extends TestCase
             'getPostProcessors' => $postProcessors,
         ]);
 
-        $strategy->expects($this->once())->method('getFeedQuery')->with($feed)->willReturn(null);
         $store->expects($this->never())->method('query');
 
         foreach ($preProcessors as $processor) {
@@ -100,7 +102,7 @@ class AggregatorTest extends TestCase
         }
 
         $aggregator = new Aggregator($store, $strategy);
-        $result = $aggregator->aggregate($feed);
+        $result = $aggregator->aggregate($feed, $count, $offset);
 
         self::assertEmpty($result->items);
         self::assertEquals(0, $result->total);
@@ -113,6 +115,8 @@ class AggregatorTest extends TestCase
         $query = new Query([$source1, $source2]);
         $store = $this->createMock(Store::class);
         $feed = $this->createMock(Feed::class);
+        $count = 9;
+        $offset = 3;
 
         $preProcessors = [
             $this->createMock(ItemProcessor::class),
@@ -139,7 +143,6 @@ class AggregatorTest extends TestCase
             $itemsWithDupes[2],
         ];
 
-        $strategy->expects($this->once())->method('getFeedQuery')->with($feed)->willReturn($query);
         $store->expects($this->once())->method('query')->with($query)->willReturn($itemsWithDupes);
 
         foreach ($preProcessors as $processor) {
@@ -151,7 +154,7 @@ class AggregatorTest extends TestCase
         }
 
         $aggregator = new Aggregator($store, $strategy);
-        $result = $aggregator->aggregate($feed);
+        $result = $aggregator->aggregate($feed, $count, $offset);
 
         self::assertSame($itemsNoDupes, $result->items);
         self::assertEquals(count($itemsNoDupes), $result->total);
@@ -164,6 +167,8 @@ class AggregatorTest extends TestCase
         $query = new Query([$source1, $source2]);
         $store = $this->createMock(Store::class);
         $feed = $this->createMock(Feed::class);
+        $count = 9;
+        $offset = 3;
 
         $preProcessors = [
             new class implements ItemProcessor {
@@ -197,7 +202,6 @@ class AggregatorTest extends TestCase
             $storeItems[2],
         ];
 
-        $strategy->expects($this->once())->method('getFeedQuery')->with($feed)->willReturn($query);
         $store->expects($this->once())->method('query')->with($query)->willReturn($storeItems);
 
         $preProcessors[1]->expects($this->once())->method('process')->with($processedItems);
@@ -206,7 +210,7 @@ class AggregatorTest extends TestCase
         }
 
         $aggregator = new Aggregator($store, $strategy);
-        $result = $aggregator->aggregate($feed);
+        $result = $aggregator->aggregate($feed, $count, $offset);
 
         self::assertSame($processedItems, $result->items);
         self::assertEquals(count($processedItems), $result->total);
@@ -219,6 +223,8 @@ class AggregatorTest extends TestCase
         $query = new Query([$source1, $source2]);
         $store = $this->createMock(Store::class);
         $feed = $this->createMock(Feed::class);
+        $count = 9;
+        $offset = 3;
 
         $preProcessors = [
             $this->createMock(ItemProcessor::class),
@@ -252,7 +258,6 @@ class AggregatorTest extends TestCase
             $storeItems[2],
         ];
 
-        $strategy->expects($this->once())->method('getFeedQuery')->with($feed)->willReturn($query);
         $store->expects($this->once())->method('query')->with($query)->willReturn($storeItems);
 
         foreach ($preProcessors as $processor) {
@@ -261,7 +266,7 @@ class AggregatorTest extends TestCase
         $postProcessors[1]->expects($this->once())->method('process')->with($processedItems);
 
         $aggregator = new Aggregator($store, $strategy);
-        $result = $aggregator->aggregate($feed);
+        $result = $aggregator->aggregate($feed, $count, $offset);
 
         self::assertSame($processedItems, $result->items);
         self::assertEquals(count($storeItems), $result->total);
@@ -274,6 +279,8 @@ class AggregatorTest extends TestCase
         $query = new Query([$source1, $source2]);
         $store = $this->createMock(Store::class);
         $feed = $this->createMock(Feed::class);
+        $count = 9;
+        $offset = 3;
 
         $removeProcessor = new class implements ItemProcessor {
             public function process(array &$items): void
@@ -312,14 +319,13 @@ class AggregatorTest extends TestCase
             $preProcessedItems[0],
         ];
 
-        $strategy->expects($this->once())->method('getFeedQuery')->with($feed)->willReturn($query);
         $store->expects($this->once())->method('query')->with($query)->willReturn($storeItems);
 
         $preProcessors[1]->expects($this->once())->method('process')->with($preProcessedItems);
         $postProcessors[1]->expects($this->once())->method('process')->with($postProcessedItems);
 
         $aggregator = new Aggregator($store, $strategy);
-        $result = $aggregator->aggregate($feed);
+        $result = $aggregator->aggregate($feed, $count, $offset);
 
         self::assertSame($postProcessedItems, $result->items);
         self::assertEquals(count($preProcessedItems), $result->total);
@@ -328,10 +334,11 @@ class AggregatorTest extends TestCase
     public function testAggregateTruncateItems()
     {
         $count = 3;
+        $offset = 0;
 
         $source1 = $this->createMock(Source::class);
         $source2 = $this->createMock(Source::class);
-        $query = new Query([$source1, $source2], null, null, $count);
+        $query = new Query([$source1, $source2], null, null, $count, $offset);
         $store = $this->createMock(Store::class);
         $feed = $this->createMock(Feed::class);
 
@@ -387,14 +394,13 @@ class AggregatorTest extends TestCase
             $postProcessedItems[2],
         ];
 
-        $strategy->expects($this->once())->method('getFeedQuery')->with($feed)->willReturn($query);
         $store->expects($this->once())->method('query')->with($query)->willReturn($storeItems);
 
         $preProcessors[1]->expects($this->once())->method('process')->with($preProcessedItems);
         $postProcessors[1]->expects($this->once())->method('process')->with($postProcessedItems);
 
         $aggregator = new Aggregator($store, $strategy);
-        $result = $aggregator->aggregate($feed);
+        $result = $aggregator->aggregate($feed, $count, $offset);
 
         self::assertSame($finalItems, $result->items);
         self::assertEquals(count($preProcessedItems), $result->total);
