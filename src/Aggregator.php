@@ -9,6 +9,7 @@ use RebelCode\IrisEngine\Aggregator\AggregationStrategy;
 use RebelCode\IrisEngine\Data\Feed;
 use RebelCode\IrisEngine\Data\Item;
 use RebelCode\IrisEngine\Exception\StoreException;
+use RebelCode\IrisEngine\Store\Query;
 
 class Aggregator
 {
@@ -43,14 +44,14 @@ class Aggregator
 
         $preProcessors = $this->strategy->getPreProcessors($feed, $query);
         foreach ($preProcessors as $processor) {
-            $processor->process($items, $feed);
+            $processor->process($items, $feed, $query);
         }
 
         $total = count($items);
 
         $postProcessors = $this->strategy->getPostProcessors($feed, $query);
         foreach ($postProcessors as $processor) {
-            $processor->process($items, $feed);
+            $processor->process($items, $feed, $query);
         }
 
         // Make sure that the list of items is not greater than the query's count after post-processing

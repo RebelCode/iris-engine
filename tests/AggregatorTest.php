@@ -55,11 +55,11 @@ class AggregatorTest extends TestCase
         $store->expects($this->once())->method('query')->with($query)->willReturn($items);
 
         foreach ($preProcessors as $processor) {
-            $processor->expects($this->once())->method('process')->with($items, $feed);
+            $processor->expects($this->once())->method('process')->with($items, $feed, $query);
         }
 
         foreach ($postProcessors as $processor) {
-            $processor->expects($this->once())->method('process')->with($items, $feed);
+            $processor->expects($this->once())->method('process')->with($items, $feed, $query);
         }
 
         $aggregator = new Aggregator($store, $strategy);
@@ -146,11 +146,11 @@ class AggregatorTest extends TestCase
         $store->expects($this->once())->method('query')->with($query)->willReturn($itemsWithDupes);
 
         foreach ($preProcessors as $processor) {
-            $processor->expects($this->once())->method('process')->with($itemsNoDupes, $feed);
+            $processor->expects($this->once())->method('process')->with($itemsNoDupes, $feed, $query);
         }
 
         foreach ($postProcessors as $processor) {
-            $processor->expects($this->once())->method('process')->with($itemsNoDupes, $feed);
+            $processor->expects($this->once())->method('process')->with($itemsNoDupes, $feed, $query);
         }
 
         $aggregator = new Aggregator($store, $strategy);
@@ -172,7 +172,7 @@ class AggregatorTest extends TestCase
 
         $preProcessors = [
             new class implements ItemProcessor {
-                public function process(array &$items, Feed $feed): void
+                public function process(array &$items, Feed $feed, Query $query): void
                 {
                     unset($items[1]);
                     $items = array_values($items);
@@ -204,9 +204,9 @@ class AggregatorTest extends TestCase
 
         $store->expects($this->once())->method('query')->with($query)->willReturn($storeItems);
 
-        $preProcessors[1]->expects($this->once())->method('process')->with($processedItems, $feed);
+        $preProcessors[1]->expects($this->once())->method('process')->with($processedItems, $feed, $query);
         foreach ($postProcessors as $processor) {
-            $processor->expects($this->once())->method('process')->with($processedItems, $feed);
+            $processor->expects($this->once())->method('process')->with($processedItems, $feed, $query);
         }
 
         $aggregator = new Aggregator($store, $strategy);
@@ -233,7 +233,7 @@ class AggregatorTest extends TestCase
 
         $postProcessors = [
             new class implements ItemProcessor {
-                public function process(array &$items, Feed $feed): void
+                public function process(array &$items, Feed $feed, Query $query): void
                 {
                     unset($items[1]);
                     $items = array_values($items);
@@ -261,9 +261,9 @@ class AggregatorTest extends TestCase
         $store->expects($this->once())->method('query')->with($query)->willReturn($storeItems);
 
         foreach ($preProcessors as $processor) {
-            $processor->expects($this->once())->method('process')->with($storeItems, $feed);
+            $processor->expects($this->once())->method('process')->with($storeItems, $feed, $query);
         }
-        $postProcessors[1]->expects($this->once())->method('process')->with($processedItems, $feed);
+        $postProcessors[1]->expects($this->once())->method('process')->with($processedItems, $feed, $query);
 
         $aggregator = new Aggregator($store, $strategy);
         $result = $aggregator->aggregate($feed, $count, $offset);
@@ -283,7 +283,7 @@ class AggregatorTest extends TestCase
         $offset = 3;
 
         $removeProcessor = new class implements ItemProcessor {
-            public function process(array &$items, Feed $feed): void
+            public function process(array &$items, Feed $feed, Query $query): void
             {
                 unset($items[1]);
                 $items = array_values($items);
@@ -321,8 +321,8 @@ class AggregatorTest extends TestCase
 
         $store->expects($this->once())->method('query')->with($query)->willReturn($storeItems);
 
-        $preProcessors[1]->expects($this->once())->method('process')->with($preProcessedItems, $feed);
-        $postProcessors[1]->expects($this->once())->method('process')->with($postProcessedItems, $feed);
+        $preProcessors[1]->expects($this->once())->method('process')->with($preProcessedItems, $feed, $query);
+        $postProcessors[1]->expects($this->once())->method('process')->with($postProcessedItems, $feed, $query);
 
         $aggregator = new Aggregator($store, $strategy);
         $result = $aggregator->aggregate($feed, $count, $offset);
@@ -347,9 +347,11 @@ class AggregatorTest extends TestCase
         $addProcessor = new class($newItem) implements ItemProcessor {
             protected $newItem;
 
-            public function __construct($newItem) { $this->newItem = $newItem; }
+            public function __construct($newItem) {
+                $this->newItem = $newItem;
+            }
 
-            public function process(array &$items, Feed $feed): void
+            public function process(array &$items, Feed $feed, Query $query): void
             {
                 array_splice($items, 1, 0, [$this->newItem]);
             }
@@ -396,8 +398,8 @@ class AggregatorTest extends TestCase
 
         $store->expects($this->once())->method('query')->with($query)->willReturn($storeItems);
 
-        $preProcessors[1]->expects($this->once())->method('process')->with($preProcessedItems, $feed);
-        $postProcessors[1]->expects($this->once())->method('process')->with($postProcessedItems, $feed);
+        $preProcessors[1]->expects($this->once())->method('process')->with($preProcessedItems, $feed, $query);
+        $postProcessors[1]->expects($this->once())->method('process')->with($postProcessedItems, $feed, $query);
 
         $aggregator = new Aggregator($store, $strategy);
         $result = $aggregator->aggregate($feed, $count, $offset);
