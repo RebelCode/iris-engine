@@ -26,4 +26,16 @@ class Source extends ImmutableDataObject
         $this->id = $id;
         $this->type = $type;
     }
+
+    public static function fromString(string $string): Source
+    {
+        $parts = explode('||', $string);
+
+        return new Source($parts[0] ?? '', $parts[1] ?? '');
+    }
+
+    public function __toString(): string
+    {
+        return $this->id . '||' . $this->type;
+    }
 }
