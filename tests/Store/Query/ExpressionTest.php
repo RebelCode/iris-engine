@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace RebelCode\IrisEngine\Test\Func\Store\Query;
+namespace RebelCode\Iris\Test\Func\Store\Query;
 
 use PHPUnit\Framework\TestCase;
-use RebelCode\IrisEngine\Store\Query\Expression;
+use RebelCode\Iris\Store\Query\Expression;
 
 class ExpressionTest extends TestCase
 {

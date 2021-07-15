@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace RebelCode\IrisEngine\Test\Func\Exception;
+namespace RebelCode\Iris\Test\Func\Exception;
 
 use Exception;
 use PHPUnit\Framework\TestCase;
-use RebelCode\IrisEngine\Exception\IrisException;
+use RebelCode\Iris\Exception\IrisException;
 use RuntimeException;
 use Throwable;
 

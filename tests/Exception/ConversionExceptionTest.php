@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace RebelCode\IrisEngine\Test\Func\Exception;
+namespace RebelCode\Iris\Test\Func\Exception;
 
 use Exception;
 use PHPUnit\Framework\TestCase;
-use RebelCode\IrisEngine\Data\Item;
-use RebelCode\IrisEngine\Exception\ConversionException;
-use RebelCode\IrisEngine\Exception\IrisException;
+use RebelCode\Iris\Data\Item;
+use RebelCode\Iris\Exception\ConversionException;
+use RebelCode\Iris\Exception\IrisException;
 use Throwable;
 
 class ConversionExceptionTest extends TestCase

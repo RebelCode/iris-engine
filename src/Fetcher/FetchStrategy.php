@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace RebelCode\IrisEngine\Fetcher;
+namespace RebelCode\Iris\Fetcher;
 
-use RebelCode\IrisEngine\Data\Source;
+use RebelCode\Iris\Data\Source;
 
 interface FetchStrategy
 {

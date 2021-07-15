@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace RebelCode\IrisEngine\Test\Func;
+namespace RebelCode\Iris\Test\Func;
 
 use PHPUnit\Framework\TestCase;
-use RebelCode\IrisEngine\Data\Source;
-use RebelCode\IrisEngine\Exception\InvalidSourceException;
-use RebelCode\IrisEngine\Fetcher;
-use RebelCode\IrisEngine\Fetcher\Catalog;
-use RebelCode\IrisEngine\Fetcher\FetchResult;
-use RebelCode\IrisEngine\Fetcher\FetchStrategy;
+use RebelCode\Iris\Data\Source;
+use RebelCode\Iris\Exception\InvalidSourceException;
+use RebelCode\Iris\Fetcher;
+use RebelCode\Iris\Fetcher\Catalog;
+use RebelCode\Iris\Fetcher\FetchResult;
+use RebelCode\Iris\Fetcher\FetchStrategy;
 
 class FetcherTest extends TestCase
 {

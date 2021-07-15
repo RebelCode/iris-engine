@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace RebelCode\IrisEngine\Aggregator;
+namespace RebelCode\Iris\Aggregator;
 
-use RebelCode\IrisEngine\Data\Item;
+use RebelCode\Iris\Data\Item;
 
 class AggregateResult
 {

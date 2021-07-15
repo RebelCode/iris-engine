@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace RebelCode\IrisEngine\Test\Func\Store\Query;
+namespace RebelCode\Iris\Test\Func\Store\Query;
 
 use PHPUnit\Framework\TestCase;
-use RebelCode\IrisEngine\Store\Query\Condition;
-use RebelCode\IrisEngine\Store\Query\Criterion;
+use RebelCode\Iris\Store\Query\Condition;
+use RebelCode\Iris\Store\Query\Criterion;
 
 class ConditionTest extends TestCase
 {

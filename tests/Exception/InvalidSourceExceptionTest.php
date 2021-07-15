@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace RebelCode\IrisEngine\Test\Func\Exception;
+namespace RebelCode\Iris\Test\Func\Exception;
 
 use Exception;
 use PHPUnit\Framework\TestCase;
-use RebelCode\IrisEngine\Data\Source;
-use RebelCode\IrisEngine\Exception\InvalidSourceException;
-use RebelCode\IrisEngine\Exception\IrisException;
+use RebelCode\Iris\Data\Source;
+use RebelCode\Iris\Exception\InvalidSourceException;
+use RebelCode\Iris\Exception\IrisException;
 use Throwable;
 
 class InvalidSourceExceptionTest extends TestCase

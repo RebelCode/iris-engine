@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace RebelCode\IrisEngine\Test\Func;
+namespace RebelCode\Iris\Test\Func;
 
 use PHPUnit\Framework\TestCase;
-use RebelCode\IrisEngine\Aggregator;
-use RebelCode\IrisEngine\Aggregator\AggregationStrategy;
-use RebelCode\IrisEngine\Aggregator\ItemProcessor;
-use RebelCode\IrisEngine\Data\Feed;
-use RebelCode\IrisEngine\Data\Item;
-use RebelCode\IrisEngine\Data\Source;
-use RebelCode\IrisEngine\Store;
-use RebelCode\IrisEngine\Store\Query;
+use RebelCode\Iris\Aggregator;
+use RebelCode\Iris\Aggregator\AggregationStrategy;
+use RebelCode\Iris\Aggregator\ItemProcessor;
+use RebelCode\Iris\Data\Feed;
+use RebelCode\Iris\Data\Item;
+use RebelCode\Iris\Data\Source;
+use RebelCode\Iris\Store;
+use RebelCode\Iris\Store\Query;
 
 class AggregatorTest extends TestCase
 {

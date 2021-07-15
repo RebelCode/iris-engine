@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace RebelCode\IrisEngine\Test\Func\Fetcher;
+namespace RebelCode\Iris\Test\Func\Fetcher;
 
 use PHPUnit\Framework\TestCase;
-use RebelCode\IrisEngine\Data\Item;
-use RebelCode\IrisEngine\Data\Source;
-use RebelCode\IrisEngine\Fetcher\FetchResult;
+use RebelCode\Iris\Data\Item;
+use RebelCode\Iris\Data\Source;
+use RebelCode\Iris\Fetcher\FetchResult;
 
 class FetchResultTest extends TestCase
 {

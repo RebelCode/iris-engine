@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace RebelCode\IrisEngine\Store;
+namespace RebelCode\Iris\Store;
 
-use RebelCode\IrisEngine\Data\Source;
-use RebelCode\IrisEngine\Store\Query\Condition;
-use RebelCode\IrisEngine\Store\Query\Order;
+use RebelCode\Iris\Data\Source;
+use RebelCode\Iris\Store\Query\Condition;
+use RebelCode\Iris\Store\Query\Order;
 
 class Query
 {

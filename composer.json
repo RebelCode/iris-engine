@@ -20,12 +20,12 @@
   },
   "autoload": {
     "psr-4": {
-      "RebelCode\\IrisEngine\\": "src"
+      "RebelCode\\Iris\\": "src"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "RebelCode\\IrisEngine\\Test\\Func\\": "tests"
+      "RebelCode\\Iris\\Test\\Func\\": "tests"
     }
   }
 }

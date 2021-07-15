@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace RebelCode\IrisEngine\Exception;
+namespace RebelCode\Iris\Exception;
 
-use RebelCode\IrisEngine\Data\Source;
-use RebelCode\IrisEngine\Fetcher;
+use RebelCode\Iris\Data\Source;
+use RebelCode\Iris\Fetcher;
 use Throwable;
 
 /** @psalm-immutable */

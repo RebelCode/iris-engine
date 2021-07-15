@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace RebelCode\IrisEngine\Exception;
+namespace RebelCode\Iris\Exception;
 
-use RebelCode\IrisEngine\Data\Item;
+use RebelCode\Iris\Data\Item;
 use Throwable;
 
 /** @psalm-immutable */

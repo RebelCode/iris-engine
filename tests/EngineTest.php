@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace RebelCode\IrisEngine\Test\Func;
+namespace RebelCode\Iris\Test\Func;
 
 use PHPUnit\Framework\TestCase;
-use RebelCode\IrisEngine\Aggregator;
-use RebelCode\IrisEngine\Converter;
-use RebelCode\IrisEngine\Data\Item;
-use RebelCode\IrisEngine\Data\Source;
-use RebelCode\IrisEngine\Engine;
-use RebelCode\IrisEngine\Fetcher;
-use RebelCode\IrisEngine\Fetcher\FetchResult;
-use RebelCode\IrisEngine\Store;
+use RebelCode\Iris\Aggregator;
+use RebelCode\Iris\Converter;
+use RebelCode\Iris\Data\Item;
+use RebelCode\Iris\Data\Source;
+use RebelCode\Iris\Engine;
+use RebelCode\Iris\Fetcher;
+use RebelCode\Iris\Fetcher\FetchResult;
+use RebelCode\Iris\Store;
 
 class EngineTest extends TestCase
 {

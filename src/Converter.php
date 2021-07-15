@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace RebelCode\IrisEngine;
+namespace RebelCode\Iris;
 
-use RebelCode\IrisEngine\Converter\ConversionStrategy;
-use RebelCode\IrisEngine\Data\Item;
-use RebelCode\IrisEngine\Exception\ConversionException;
-use RebelCode\IrisEngine\Exception\StoreException;
+use RebelCode\Iris\Converter\ConversionStrategy;
+use RebelCode\Iris\Data\Item;
+use RebelCode\Iris\Exception\ConversionException;
+use RebelCode\Iris\Exception\StoreException;
 
 class Converter
 {

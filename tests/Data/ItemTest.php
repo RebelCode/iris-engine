@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace RebelCode\IrisEngine\Test\Func\Data;
+namespace RebelCode\Iris\Test\Func\Data;
 
 use PHPUnit\Framework\TestCase;
-use RebelCode\IrisEngine\Data\ImmutableDataObject;
-use RebelCode\IrisEngine\Data\Item;
-use RebelCode\IrisEngine\Data\Source;
+use RebelCode\Iris\Data\ImmutableDataObject;
+use RebelCode\Iris\Data\Item;
+use RebelCode\Iris\Data\Source;
 
 class ItemTest extends TestCase
 {

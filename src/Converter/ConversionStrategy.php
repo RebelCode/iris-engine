@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace RebelCode\IrisEngine\Converter;
+namespace RebelCode\Iris\Converter;
 
-use RebelCode\IrisEngine\Data\Item;
-use RebelCode\IrisEngine\Exception\ConversionException;
+use RebelCode\Iris\Data\Item;
+use RebelCode\Iris\Exception\ConversionException;
 
 interface ConversionStrategy
 {

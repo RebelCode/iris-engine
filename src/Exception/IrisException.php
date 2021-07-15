@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace RebelCode\IrisEngine\Exception;
+namespace RebelCode\Iris\Exception;
 
 use RuntimeException;
 use Throwable;

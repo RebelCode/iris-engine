@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace RebelCode\IrisEngine\Test\Func\Exception;
+namespace RebelCode\Iris\Test\Func\Exception;
 
 use Exception;
 use PHPUnit\Framework\TestCase;
-use RebelCode\IrisEngine\Data\Source;
-use RebelCode\IrisEngine\Exception\FetchException;
-use RebelCode\IrisEngine\Exception\IrisException;
-use RebelCode\IrisEngine\Fetcher;
+use RebelCode\Iris\Data\Source;
+use RebelCode\Iris\Exception\FetchException;
+use RebelCode\Iris\Exception\IrisException;
+use RebelCode\Iris\Fetcher;
 use Throwable;
 
 class FetchExceptionTest extends TestCase

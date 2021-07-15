@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace RebelCode\IrisEngine;
+namespace RebelCode\Iris;
 
-use RebelCode\IrisEngine\Aggregator\AggregateResult;
-use RebelCode\IrisEngine\Aggregator\AggregationStrategy;
-use RebelCode\IrisEngine\Data\Feed;
-use RebelCode\IrisEngine\Data\Item;
-use RebelCode\IrisEngine\Exception\StoreException;
-use RebelCode\IrisEngine\Store\Query;
+use RebelCode\Iris\Aggregator\AggregateResult;
+use RebelCode\Iris\Aggregator\AggregationStrategy;
+use RebelCode\Iris\Data\Feed;
+use RebelCode\Iris\Data\Item;
+use RebelCode\Iris\Exception\StoreException;
+use RebelCode\Iris\Store\Query;
 
 class Aggregator
 {

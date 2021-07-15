@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace RebelCode\IrisEngine\Data;
+namespace RebelCode\Iris\Data;
 
 /** @psalm-immutable */
 class Source extends ImmutableDataObject

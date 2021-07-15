@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace RebelCode\IrisEngine\Fetcher;
+namespace RebelCode\Iris\Fetcher;
 
-use RebelCode\IrisEngine\Data\Source;
-use RebelCode\IrisEngine\Exception\FetchException;
-use RebelCode\IrisEngine\Exception\InvalidSourceException;
+use RebelCode\Iris\Data\Source;
+use RebelCode\Iris\Exception\FetchException;
+use RebelCode\Iris\Exception\InvalidSourceException;
 
 interface Catalog
 {
