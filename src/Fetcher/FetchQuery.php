@@ -18,11 +18,19 @@ class FetchQuery
     /** @var int|null */
     public $count;
 
-    public function __construct(Source $source, ?string $cursor = null, ?int $count = null)
-    {
+    /** @var int */
+    public $accrual;
+
+    public function __construct(
+        Source $source,
+        ?string $cursor = null,
+        ?int $count = null,
+        int $accrual = 0
+    ) {
         $this->source = $source;
         $this->cursor = $cursor;
         $this->count = $count;
+        $this->accrual = $accrual;
     }
 
     public function forNextBatch(FetchResult $result): ?self
@@ -31,6 +39,6 @@ class FetchQuery
             return null;
         }
 
-        return new self($this->source, $result->nextCursor, $this->count);
+        return new self($this->source, $result->nextCursor, $this->count, $this->accrual + count($result->items));
     }
 }
