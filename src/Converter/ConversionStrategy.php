@@ -10,6 +10,16 @@ use RebelCode\Iris\Exception\ConversionException;
 interface ConversionStrategy
 {
     /**
+     * Converts a batch of items after each item in the batch has been individually converted.
+     *
+     * @param Item[] $incoming The incoming items to be converted.
+     * @param array<string, Item> $existing A list of corresponding existing items from the store.
+     *
+     * @return Item[] The list of items to convert.
+     */
+    public function beforeBatch(array $incoming, array $existing): array;
+
+    /**
      * Converts an item.
      *
      * @param Item $item The item to convert.
@@ -45,4 +55,13 @@ interface ConversionStrategy
      * @throws ConversionShortCircuit To stop conversion early and dismiss any remaining items.
      */
     public function finalize(Item $item): ?Item;
+
+    /**
+     * Converts a batch of items after each item in the batch has been individually converted.
+     *
+     * @param Item[] $items The converted items.
+     *
+     * @return Item[] The final list of items.
+     */
+    public function afterBatch(array $items): array;
 }

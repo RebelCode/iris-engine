@@ -135,14 +135,79 @@ class ConverterTest extends TestCase
         ];
 
         $store->expects($this->once())->method('getMultiple')->with(['1', '2', '3'])->willReturn([]);
+
+        $strategy->expects($this->once())->method('beforeBatch')->willReturnArgument(0);
         $strategy->expects($this->exactly(3))->method('convert')->willReturnArgument(0);
         $strategy->expects($this->never())->method('reconcile');
         $strategy->expects($this->exactly(3))->method('finalize')->willReturnArgument(0);
+        $strategy->expects($this->once())->method('afterBatch')->willReturnArgument(0);
 
         $converter = new Converter($store, $strategy);
         $actualItems = $converter->convertMultiple($items);
 
         self::assertEquals($items, $actualItems);
+    }
+
+    public function testConvertMultipleBeforeBatch()
+    {
+        $store = $this->createMock(Store::class);
+        $strategy = $this->createMock(Converter\ConversionStrategy::class);
+
+        $source = $this->createMock(Source::class);
+        $items = [
+            new Item('1', 1, [$source]),
+            new Item('2', 2, [$source]),
+            new Item('3', 3, [$source]),
+        ];
+        $changed = [
+            $items[0],
+            new Item('4', 4, [$source]),
+            $items[2],
+        ];
+
+        $store->expects($this->once())->method('getMultiple')->with(['1', '2', '3'])->willReturn([]);
+
+        $strategy->expects($this->once())->method('beforeBatch')->with($items)->willReturn($changed);
+        $strategy->expects($this->exactly(3))->method('convert')->willReturnArgument(0);
+        $strategy->expects($this->never())->method('reconcile');
+        $strategy->expects($this->exactly(3))->method('finalize')->willReturnArgument(0);
+        $strategy->expects($this->once())->method('afterBatch')->willReturnArgument(0);
+
+        $converter = new Converter($store, $strategy);
+        $actualItems = $converter->convertMultiple($items);
+
+        self::assertEquals($changed, $actualItems);
+    }
+
+    public function testConvertMultipleAfterBatch()
+    {
+        $store = $this->createMock(Store::class);
+        $strategy = $this->createMock(Converter\ConversionStrategy::class);
+
+        $source = $this->createMock(Source::class);
+        $items = [
+            new Item('1', 1, [$source]),
+            new Item('2', 2, [$source]),
+            new Item('3', 3, [$source]),
+        ];
+        $changed = [
+            $items[0],
+            new Item('4', 4, [$source]),
+            $items[2],
+        ];
+
+        $store->expects($this->once())->method('getMultiple')->with(['1', '2', '3'])->willReturn([]);
+
+        $strategy->expects($this->once())->method('beforeBatch')->willReturnArgument(0);
+        $strategy->expects($this->exactly(3))->method('convert')->willReturnArgument(0);
+        $strategy->expects($this->never())->method('reconcile');
+        $strategy->expects($this->exactly(3))->method('finalize')->willReturnArgument(0);
+        $strategy->expects($this->once())->method('afterBatch')->with($items)->willReturn($changed);
+
+        $converter = new Converter($store, $strategy);
+        $actualItems = $converter->convertMultiple($items);
+
+        self::assertEquals($changed, $actualItems);
     }
 
     public function testConvertMultipleFilteredItems()
@@ -162,11 +227,14 @@ class ConverterTest extends TestCase
         ];
 
         $store->expects($this->once())->method('getMultiple')->with(['1', '2', '3'])->willReturn([]);
+
+        $strategy->expects($this->once())->method('beforeBatch')->willReturnArgument(0);
         $strategy->expects($this->exactly(3))->method('convert')->willReturnOnConsecutiveCalls(
             $items[0], null, $items[2]
         );
         $strategy->expects($this->never())->method('reconcile');
         $strategy->expects($this->exactly(2))->method('finalize')->willReturnArgument(0);
+        $strategy->expects($this->once())->method('afterBatch')->willReturnArgument(0);
 
         $converter = new Converter($store, $strategy);
         $actualItems = $converter->convertMultiple($items);
@@ -202,6 +270,10 @@ class ConverterTest extends TestCase
         ];
 
         $store->expects($this->once())->method('getMultiple')->with(['1', '2', '3'])->willReturn($existing);
+
+        $strategy->expects($this->once())->method('beforeBatch')->willReturnArgument(0);
+        $strategy->expects($this->once())->method('afterBatch')->willReturnArgument(0);
+
         $strategy->expects($this->exactly(3))
                  ->method('convert')
                  ->withConsecutive([$items[0]], [$items[1]], [$items[2]])
@@ -250,6 +322,9 @@ class ConverterTest extends TestCase
 
         $store->expects($this->once())->method('getMultiple')->with(['1', '2', '3', '4'])->willReturn([]);
 
+        $strategy->expects($this->once())->method('beforeBatch')->willReturnArgument(0);
+        $strategy->expects($this->once())->method('afterBatch')->willReturnArgument(0);
+
         // Convert short-circuits after first 2 items
         $count = 0;
         $strategy->expects($this->exactly(2))->method('convert')->willReturnCallback(function ($item) use (&$count) {
@@ -290,6 +365,9 @@ class ConverterTest extends TestCase
         ];
 
         $store->expects($this->once())->method('getMultiple')->with(['1', '2', '3', '4'])->willReturn([]);
+
+        $strategy->expects($this->once())->method('beforeBatch')->willReturnArgument(0);
+        $strategy->expects($this->once())->method('afterBatch')->willReturnArgument(0);
 
         // Convert short-circuits after first 2 items
         $count = 0;

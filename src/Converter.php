@@ -59,6 +59,8 @@ class Converter
             )
         );
 
+        $items = $this->strategy->beforeBatch($items, $existingItems);
+
         $convertedItems = [];
         foreach ($items as $item) {
             try {
@@ -73,7 +75,7 @@ class Converter
             }
         }
 
-        return $convertedItems;
+        return $this->strategy->afterBatch($convertedItems);
     }
 
     /**
