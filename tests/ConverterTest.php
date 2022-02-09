@@ -231,4 +231,85 @@ class ConverterTest extends TestCase
 
         self::assertEquals($expected, $actualItems);
     }
+
+    public function testConvertMultipleShortCircuitNoYield()
+    {
+        $store = $this->createMock(Store::class);
+        $strategy = $this->createMock(Converter\ConversionStrategy::class);
+
+        $source = $this->createMock(Source::class);
+        $items = [
+            new Item('1', 1, [$source]),
+            new Item('2', 2, [$source]),
+            new Item('3', 3, [$source]),
+            new Item('4', 4, [$source]),
+        ];
+        $expected = [
+            $items[0],
+        ];
+
+        $store->expects($this->once())->method('getMultiple')->with(['1', '2', '3', '4'])->willReturn([]);
+
+        // Convert short-circuits after first 2 items
+        $count = 0;
+        $strategy->expects($this->exactly(2))->method('convert')->willReturnCallback(function ($item) use (&$count) {
+            $count++;
+            if ($count >= 2) {
+                throw new Converter\ConversionShortCircuit();
+            }
+            return $item;
+        });
+
+        $strategy->expects($this->never())->method('reconcile');
+        $strategy->expects($this->exactly(1))
+                 ->method('finalize')
+                 ->withConsecutive([$items[0]])
+                 ->willReturnArgument(0);
+
+        $converter = new Converter($store, $strategy);
+        $actualItems = $converter->convertMultiple($items);
+
+        self::assertEquals($expected, $actualItems);
+    }
+
+    public function testConvertMultipleShortCircuitYield()
+    {
+        $store = $this->createMock(Store::class);
+        $strategy = $this->createMock(Converter\ConversionStrategy::class);
+
+        $source = $this->createMock(Source::class);
+        $items = [
+            new Item('1', 1, [$source]),
+            new Item('2', 2, [$source]),
+            new Item('3', 3, [$source]),
+            new Item('4', 4, [$source]),
+        ];
+        $expected = [
+            $items[0],
+            $items[1],
+        ];
+
+        $store->expects($this->once())->method('getMultiple')->with(['1', '2', '3', '4'])->willReturn([]);
+
+        // Convert short-circuits after first 2 items
+        $count = 0;
+        $strategy->expects($this->exactly(2))->method('convert')->willReturnCallback(function ($item) use (&$count) {
+            $count++;
+            if ($count >= 2) {
+                throw new Converter\ConversionShortCircuit($item);
+            }
+            return $item;
+        });
+
+        $strategy->expects($this->never())->method('reconcile');
+        $strategy->expects($this->exactly(1))
+                 ->method('finalize')
+                 ->withConsecutive([$items[0]])
+                 ->willReturnArgument(0);
+
+        $converter = new Converter($store, $strategy);
+        $actualItems = $converter->convertMultiple($items);
+
+        self::assertEquals($expected, $actualItems);
+    }
 }

@@ -17,6 +17,7 @@ interface ConversionStrategy
      * @return Item|null The converted item, or null if the item should be rejected.
      *
      * @throws ConversionException If an error occurred.
+     * @throws ConversionShortCircuit To stop conversion early and dismiss any remaining items.
      */
     public function convert(Item $item): ?Item;
 
@@ -29,6 +30,7 @@ interface ConversionStrategy
      * @return Item|null The reconciled item, or null if the item should be rejected.
      *
      * @throws ConversionException If an error occurred.
+     * @throws ConversionShortCircuit To stop conversion early and dismiss any remaining items.
      */
     public function reconcile(Item $incoming, Item $existing): ?Item;
 
@@ -40,6 +42,7 @@ interface ConversionStrategy
      * @return Item|null The finalized item, or null if the item should be rejected.
      *
      * @throws ConversionException If an error occurred.
+     * @throws ConversionShortCircuit To stop conversion early and dismiss any remaining items.
      */
     public function finalize(Item $item): ?Item;
 }

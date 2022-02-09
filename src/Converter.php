@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace RebelCode\Iris;
 
+use RebelCode\Iris\Converter\ConversionShortCircuit;
 use RebelCode\Iris\Converter\ConversionStrategy;
 use RebelCode\Iris\Data\Item;
 use RebelCode\Iris\Exception\ConversionException;
@@ -32,7 +33,11 @@ class Converter
      */
     public function convert(Item $item): ?Item
     {
-        return $this->doConversion($item, $this->store->get($item->id));
+        try {
+            return $this->doConversion($item, $this->store->get($item->id));
+        } catch (ConversionShortCircuit $e) {
+            return null;
+        }
     }
 
     /**
@@ -56,10 +61,15 @@ class Converter
 
         $convertedItems = [];
         foreach ($items as $item) {
-            $item = $this->doConversion($item, $existingItems[$item->id] ?? null);
-
-            if ($item !== null) {
-                $convertedItems[] = $item;
+            try {
+                $item = $this->doConversion($item, $existingItems[$item->id] ?? null);
+            } catch (ConversionShortCircuit $e) {
+                $item = $e->getItem();
+                break;
+            } finally {
+                if ($item !== null) {
+                    $convertedItems[] = $item;
+                }
             }
         }
 
@@ -68,6 +78,7 @@ class Converter
 
     /**
      * @throws Exception\ConversionException
+     * @throws ConversionShortCircuit
      */
     protected function doConversion(Item $item, ?Item $existing): ?Item
     {
