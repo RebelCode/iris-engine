@@ -23,15 +23,13 @@ class EngineTest extends TestCase
         $converter = $this->createMock(Converter::class);
         $aggregator = $this->createMock(Aggregator::class);
         $store = $this->createMock(Store::class);
-        $importer = $this->createMock(Importer::class);
 
-        $engine = new Engine($fetcher, $converter, $aggregator, $store, $importer);
+        $engine = new Engine($fetcher, $converter, $aggregator, $store);
 
         self::assertSame($fetcher, $engine->getFetcher());
         self::assertSame($converter, $engine->getConverter());
         self::assertSame($aggregator, $engine->getAggregator());
         self::assertSame($store, $engine->getStore());
-        self::assertSame($importer, $engine->getImporter());
     }
 
     public function testFetch()
@@ -40,8 +38,7 @@ class EngineTest extends TestCase
         $converter = $this->createMock(Converter::class);
         $aggregator = $this->createMock(Aggregator::class);
         $store = $this->createMock(Store::class);
-        $importer = $this->createMock(Importer::class);
-        $engine = new Engine($fetcher, $converter, $aggregator, $store, $importer);
+        $engine = new Engine($fetcher, $converter, $aggregator, $store);
 
         $source = $this->createMock(Source::class);
         $cursor = 'ABC123';
@@ -84,8 +81,7 @@ class EngineTest extends TestCase
         $converter = $this->createMock(Converter::class);
         $aggregator = $this->createMock(Aggregator::class);
         $store = $this->createMock(Store::class);
-        $importer = $this->createMock(Importer::class);
-        $engine = new Engine($fetcher, $converter, $aggregator, $store, $importer);
+        $engine = new Engine($fetcher, $converter, $aggregator, $store);
 
         $source = $this->createMock(Source::class);
         $cursor = 'ABC123';

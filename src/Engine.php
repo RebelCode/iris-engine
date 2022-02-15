@@ -25,9 +25,6 @@ class Engine
     /** @var Store */
     protected $store;
 
-    /** @var Importer */
-    protected $importer;
-
     /**
      * Constructor.
      */
@@ -35,14 +32,12 @@ class Engine
         Fetcher $fetcher,
         Converter $converter,
         Aggregator $aggregator,
-        Store $store,
-        Importer $importer
+        Store $store
     ) {
         $this->fetcher = $fetcher;
         $this->converter = $converter;
         $this->aggregator = $aggregator;
         $this->store = $store;
-        $this->importer = $importer;
     }
 
     public function getFetcher(): Fetcher
@@ -63,11 +58,6 @@ class Engine
     public function getStore(): Store
     {
         return $this->store;
-    }
-
-    public function getImporter(): Importer
-    {
-        return $this->importer;
     }
 
     /**
