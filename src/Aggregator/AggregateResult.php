@@ -17,8 +17,8 @@ class AggregateResult
     /**
      * Constructor.
      *
-     * @param Item[] $items
-     * @param int $total
+     * @param Item[] $items The aggregated items.
+     * @param int $total The total number of aggregated items, including those not part of this result.
      */
     public function __construct(array $items, int $total)
     {

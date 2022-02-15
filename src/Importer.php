@@ -123,7 +123,7 @@ class Importer
                 // Schedule the next batch if not interrupted and a new batch was created successfully
                 $nextQuery = $this->strategy->createNextBatch($query, $result);
                 $hasNext = $nextQuery !== null;
-    
+
                 if ($hasNext) {
                     $hasNext = $this->scheduler->scheduleBatch($nextQuery, function () use ($nextQuery): void {
                         $this->importBatch($nextQuery);

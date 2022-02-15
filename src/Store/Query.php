@@ -28,11 +28,11 @@ class Query
     /**
      * Constructor.
      *
-     * @param Source[] $sources
-     * @param Order|null $order
-     * @param Condition|null $condition
-     * @param int|null $count
-     * @param int $offset
+     * @param Source[] $sources The sources to query.
+     * @param Order|null $order The order of the items.
+     * @param Condition|null $condition The condition for the query.
+     * @param int|null $count The maximum number of items to retrieve.
+     * @param int $offset The number of items to offset by.
      */
     public function __construct(
         array $sources,
