@@ -42,6 +42,7 @@ class Engine
         $this->converter = $converter;
         $this->aggregator = $aggregator;
         $this->store = $store;
+        $this->importer = $importer;
     }
 
     public function getFetcher(): Fetcher
