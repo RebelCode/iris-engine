@@ -18,10 +18,13 @@ class ImporterTest extends TestCase
 {
     protected function expect(bool $expect, MockObject $object, string $method, array $args = [], $return = null)
     {
-        $object->expects($expect ? $this->once() : $this->never())
-               ->method($method)
-               ->with(...$args)
-               ->willReturn($return);
+        $mock = $object->expects($expect ? $this->once() : $this->never())
+                    ->method($method)
+                    ->with(...$args);
+
+        if ($return !== null) {
+            $mock->willReturn($return);
+        }
     }
 
     public function importBatchProvider()
@@ -101,10 +104,11 @@ class ImporterTest extends TestCase
         }
     }
 
-    public function importForSourcesProvider() {
+    public function importForSourcesProvider()
+    {
         return [
             [false],
-            [true]
+            [true],
         ];
     }
 
