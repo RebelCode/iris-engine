@@ -5,6 +5,10 @@ declare(strict_types=1);
 namespace RebelCode\Iris;
 
 use RebelCode\Iris\Data\Source;
+use RebelCode\Iris\Exception\ConversionException;
+use RebelCode\Iris\Exception\FetchException;
+use RebelCode\Iris\Exception\InvalidSourceException;
+use RebelCode\Iris\Exception\StoreException;
 use RebelCode\Iris\Fetcher\FetchQuery;
 use RebelCode\Iris\Fetcher\FetchResult;
 use RebelCode\Iris\Importer\ImportedBatch;
@@ -78,6 +82,11 @@ class Importer
      * @param FetchQuery $query The fetch query for the items to import.
      *
      * @return ImportedBatch The imported batch as a result of importing the items fetched from the given query.
+     *
+     * @throws InvalidSourceException
+     * @throws FetchException
+     * @throws ConversionException
+     * @throws StoreException
      */
     public function importBatch(FetchQuery $query): ImportedBatch
     {
