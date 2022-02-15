@@ -40,7 +40,8 @@ class EngineTest extends TestCase
         $converter = $this->createMock(Converter::class);
         $aggregator = $this->createMock(Aggregator::class);
         $store = $this->createMock(Store::class);
-        $engine = new Engine($fetcher, $converter, $aggregator, $store);
+        $importer = $this->createMock(Importer::class);
+        $engine = new Engine($fetcher, $converter, $aggregator, $store, $importer);
 
         $source = $this->createMock(Source::class);
         $cursor = 'ABC123';
@@ -83,7 +84,8 @@ class EngineTest extends TestCase
         $converter = $this->createMock(Converter::class);
         $aggregator = $this->createMock(Aggregator::class);
         $store = $this->createMock(Store::class);
-        $engine = new Engine($fetcher, $converter, $aggregator, $store);
+        $importer = $this->createMock(Importer::class);
+        $engine = new Engine($fetcher, $converter, $aggregator, $store, $importer);
 
         $source = $this->createMock(Source::class);
         $cursor = 'ABC123';
