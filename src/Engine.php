@@ -65,9 +65,9 @@ class Engine
         return $this->store;
     }
 
-    public function getImporter(): Store
+    public function getImporter(): Importer
     {
-        return $this->store;
+        return $this->importer;
     }
 
     /**
