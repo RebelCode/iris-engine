@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 * New `Importer` class with corresponding `ImportStrategy` and `ImportScheduler` interfaces.
 * New `ImportedBatch` class which is used as a result DTO by the importer.
 * New `Marker` interface to abstract persistent flags and a `NullMarker` noop implementation.
+* Two new methods in the `ConversionStrategy` class: `beforeBatch()` and `afterBatch()`.
+* `ConversionStrategy` implementations can throw a `ConversionShortCircuit` exception to stop conversion early.
 
 ### Changed
 * The `Engine` class constructor now requires an `Importer` argument.
