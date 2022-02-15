@@ -25,11 +25,19 @@ class Engine
     /** @var Store */
     protected $store;
 
+    /** @var Importer */
+    protected $importer;
+
     /**
      * Constructor.
      */
-    public function __construct(Fetcher $fetcher, Converter $converter, Aggregator $aggregator, Store $store)
-    {
+    public function __construct(
+        Fetcher $fetcher,
+        Converter $converter,
+        Aggregator $aggregator,
+        Store $store,
+        Importer $importer
+    ) {
         $this->fetcher = $fetcher;
         $this->converter = $converter;
         $this->aggregator = $aggregator;
@@ -52,6 +60,11 @@ class Engine
     }
 
     public function getStore(): Store
+    {
+        return $this->store;
+    }
+
+    public function getImporter(): Store
     {
         return $this->store;
     }

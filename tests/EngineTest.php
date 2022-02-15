@@ -12,6 +12,7 @@ use RebelCode\Iris\Data\Source;
 use RebelCode\Iris\Engine;
 use RebelCode\Iris\Fetcher;
 use RebelCode\Iris\Fetcher\FetchResult;
+use RebelCode\Iris\Importer;
 use RebelCode\Iris\Store;
 
 class EngineTest extends TestCase
@@ -22,13 +23,15 @@ class EngineTest extends TestCase
         $converter = $this->createMock(Converter::class);
         $aggregator = $this->createMock(Aggregator::class);
         $store = $this->createMock(Store::class);
+        $importer = $this->createMock(Importer::class);
 
-        $engine = new Engine($fetcher, $converter, $aggregator, $store);
+        $engine = new Engine($fetcher, $converter, $aggregator, $store, $importer);
 
         self::assertSame($fetcher, $engine->getFetcher());
         self::assertSame($converter, $engine->getConverter());
         self::assertSame($aggregator, $engine->getAggregator());
         self::assertSame($store, $engine->getStore());
+        self::assertSame($importer, $engine->getImporter());
     }
 
     public function testFetch()
