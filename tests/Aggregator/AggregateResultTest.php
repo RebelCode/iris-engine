@@ -18,11 +18,15 @@ class AggregateResultTest extends TestCase
             $this->createMock(Item::class),
         ];
 
-        $total = 10;
+        $rawTotal = 10;
+        $preTotal = 9;
+        $postTotal = 7;
 
-        $result = new AggregateResult($items, $total);
+        $result = new AggregateResult($items, $rawTotal, $preTotal, $postTotal);
 
         self::assertSame($items, $result->items);
-        self::assertEquals($total, $result->total);
+        self::assertEquals($rawTotal, $result->storeTotal);
+        self::assertEquals($preTotal, $result->preTotal);
+        self::assertEquals($postTotal, $result->postTotal);
     }
 }

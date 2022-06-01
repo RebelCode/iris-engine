@@ -36,7 +36,7 @@ class Aggregator
         $query = $this->strategy->getFeedQuery($feed, $count, $offset);
 
         if ($query === null) {
-            return new AggregateResult([], 0);
+            return new AggregateResult([], 0, 0, 0);
         }
 
         $manualPagination = $this->strategy->doManualPagination($feed, $query);
@@ -48,17 +48,21 @@ class Aggregator
         $items = $this->store->query($storeQuery);
         $this->removeDuplicates($items);
 
+        $storeTotal = count($items);
+
         $preProcessors = $this->strategy->getPreProcessors($feed, $query);
         foreach ($preProcessors as $processor) {
             $processor->process($items, $feed, $query);
         }
 
-        $total = count($items);
+        $preTotal = count($items);
 
         $postProcessors = $this->strategy->getPostProcessors($feed, $query);
         foreach ($postProcessors as $processor) {
             $processor->process($items, $feed, $query);
         }
+
+        $postTotal = count($items);
 
         if ($manualPagination) {
             // Apply manual pagination
@@ -71,7 +75,7 @@ class Aggregator
             }
         }
 
-        return new AggregateResult($items, $total);
+        return new AggregateResult($items, $storeTotal, $preTotal, $postTotal);
     }
 
     /**

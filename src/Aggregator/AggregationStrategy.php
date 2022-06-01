@@ -17,8 +17,8 @@ interface AggregationStrategy
     /**
      * Retrieves the pre-processors to use for a given feed.
      *
-     * Pre-processors will make modifications to the list of items before it is returned in the aggregation result.
-     * These modifications will affect the final result's {@link AggregateResult::$total} count.
+     * Pre-processors will make modifications to the items before they become part of the aggregation result.
+     * These modifications will also affect the result's {@link AggregateResult::$preTotal} count.
      *
      * It is recommended to use pre-processors to perform manipulations that rely on the feed. That is, given the same
      * feed, the same pre-processing is applied to the items regardless of the query.
@@ -30,9 +30,9 @@ interface AggregationStrategy
     /**
      * Retrieves the post-processors to use for a given feed.
      *
-     * Post-processors will make modifications to the list of items before it is returned in the aggregation result,
-     * but after the pre-processors have made their modifications. Post-processors do not affect the result's
-     * {@link AggregateResult::$total} count.
+     * Post-processors will make modifications to the list of items before they become part of the aggregation result,
+     * but after the pre-processors have made already made their modifications. Post-processors will also affect the
+     * result's {@link AggregateResult::$postTotal} count.
      *
      * It is recommended to use post-processors to perform manipulations that rely on the query, rather than the feed.
      * That is, the same post-processing is applied to the items regardless of the feed.
@@ -44,7 +44,7 @@ interface AggregationStrategy
     /**
      * Whether the aggregator should apply pagination manually after post-processing.
      *
-     * This is useful if the consumer is unable to perform all of the necessary filtering using the store query which
+     * This is useful if the consumer is unable to perform all the necessary filtering using the store query which
      * is return from {@link AggregationStrategy::getFeedQuery()}. In those situations, the consumer may need to
      * perform programmatic filtering on the list of items using pre-processors or post-processors. Such consumers
      * can return true from this method to tell the aggregator to fetch all the items from the store, then apply

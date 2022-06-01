@@ -66,7 +66,9 @@ class AggregatorTest extends TestCase
         $result = $aggregator->aggregate($feed, $count, $offset);
 
         self::assertSame($items, $result->items);
-        self::assertEquals(count($items), $result->total);
+        self::assertEquals(count($items), $result->storeTotal);
+        self::assertEquals(count($items), $result->preTotal);
+        self::assertEquals(count($items), $result->postTotal);
     }
 
     public function testAggregateNoQuery()
@@ -105,7 +107,9 @@ class AggregatorTest extends TestCase
         $result = $aggregator->aggregate($feed, $count, $offset);
 
         self::assertEmpty($result->items);
-        self::assertEquals(0, $result->total);
+        self::assertEquals(0, $result->storeTotal);
+        self::assertEquals(0, $result->preTotal);
+        self::assertEquals(0, $result->postTotal);
     }
 
     public function testAggregateDuplicates()
@@ -157,7 +161,9 @@ class AggregatorTest extends TestCase
         $result = $aggregator->aggregate($feed, $count, $offset);
 
         self::assertSame($itemsNoDupes, $result->items);
-        self::assertEquals(count($itemsNoDupes), $result->total);
+        self::assertEquals(count($itemsNoDupes), $result->storeTotal);
+        self::assertEquals(count($itemsNoDupes), $result->preTotal);
+        self::assertEquals(count($itemsNoDupes), $result->postTotal);
     }
 
     public function testAggregatePreProcessorsRemoveItems()
@@ -213,7 +219,9 @@ class AggregatorTest extends TestCase
         $result = $aggregator->aggregate($feed, $count, $offset);
 
         self::assertSame($processedItems, $result->items);
-        self::assertEquals(count($processedItems), $result->total);
+        self::assertEquals(count($storeItems), $result->storeTotal);
+        self::assertEquals(count($processedItems), $result->preTotal);
+        self::assertEquals(count($processedItems), $result->postTotal);
     }
 
     public function testAggregatePostProcessorsModifyItems()
@@ -269,7 +277,9 @@ class AggregatorTest extends TestCase
         $result = $aggregator->aggregate($feed, $count, $offset);
 
         self::assertSame($processedItems, $result->items);
-        self::assertEquals(count($storeItems), $result->total);
+        self::assertEquals(count($storeItems), $result->storeTotal);
+        self::assertEquals(count($storeItems), $result->preTotal);
+        self::assertEquals(count($processedItems), $result->postTotal);
     }
 
     public function testAggregateBothProcessorsModifyItems()
@@ -328,7 +338,9 @@ class AggregatorTest extends TestCase
         $result = $aggregator->aggregate($feed, $count, $offset);
 
         self::assertSame($postProcessedItems, $result->items);
-        self::assertEquals(count($preProcessedItems), $result->total);
+        self::assertEquals(count($storeItems), $result->storeTotal);
+        self::assertEquals(count($preProcessedItems), $result->preTotal);
+        self::assertEquals(count($postProcessedItems), $result->postTotal);
     }
 
     public function testAggregateTruncateItems()
@@ -389,7 +401,9 @@ class AggregatorTest extends TestCase
         $result = $aggregator->aggregate($feed, $count, $offset);
 
         self::assertSame($finalItems, $result->items);
-        self::assertEquals(count($processedItems), $result->total);
+        self::assertEquals(count($storeItems), $result->storeTotal);
+        self::assertEquals(count($processedItems), $result->preTotal);
+        self::assertEquals(count($processedItems), $result->postTotal);
     }
 
     public function testAggregateOffsetItems()
@@ -427,6 +441,8 @@ class AggregatorTest extends TestCase
         $result = $aggregator->aggregate($feed, $count, $offset);
 
         self::assertSame($finalItems, $result->items);
-        self::assertEquals(count($storeItems), $result->total);
+        self::assertEquals(count($storeItems), $result->storeTotal);
+        self::assertEquals(count($storeItems), $result->preTotal);
+        self::assertEquals(count($storeItems), $result->postTotal);
     }
 }
