@@ -4,6 +4,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/)
 and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.3-alpha] - 2022-06-01
+### Added
+* The `total` property in `AggregateResult` has been replaced with 3 separate totals: `storeTotal`, `preTotal`, and
+  `postTotal`, which count the number of items from the store, after pre-processors, and after post-processors,
+  respectively.
+
+### Fixed
+* A deprecated error on PHP 8 when the offset in the `Aggregator` is `null`, caused by passing the offset as argument #2
+  to `array_slice`.
+
 ## [0.2-alpha2] - 2022-02-15
 ### Removed
 * Removed the `Importer` argument from the `Engine` class constructor due to circular dependency.
