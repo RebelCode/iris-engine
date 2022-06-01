@@ -65,8 +65,8 @@ class Aggregator
         $postTotal = count($items);
 
         if ($manualPagination) {
-            // Apply manual pagination
-            $items = array_slice($items, $query->offset, $query->count);
+            /** @psalm-suppress RedundantConditionGivenDocblockType, DocblockTypeContradiction */
+            $items = array_slice($items, $query->offset ?? 0, $query->count);
         } else {
             // Make sure that the list of items is not greater than the query's count after post-processing
             $count = max(0, $query->count ?? 0);
