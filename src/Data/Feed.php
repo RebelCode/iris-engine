@@ -14,10 +14,11 @@ class Feed extends ImmutableDataObject
     public $sources;
 
     /**
-     * @inheritDoc
+     * Constructor.
      *
-     * @param int|string $id
-     * @param Source[] $sources
+     * @param int|string $id The unique ID of the feed.
+     * @param Source[] $sources The sources whose items are shown in the feed.
+     * @param array<string, mixed> $data The data map.
      */
     public function __construct($id, array $sources, array $data)
     {
