@@ -27,6 +27,11 @@ class Engine
 
     /**
      * Constructor.
+     *
+     * @param FetchStrategy $fetchStrategy The strategy to use for fetching, mainly responsible for providing a catalog.
+     * @param Converter $converter The converter, used to convert fetched items into the desired data format and layout.
+     * @param Aggregator $aggregator The aggregator, used to query and aggregate imported items.
+     * @param Store $store The store, used to save fetched items to persistent storage.
      */
     public function __construct(
         FetchStrategy $fetchStrategy,
@@ -56,10 +61,15 @@ class Engine
     }
 
     /**
-     * @throws InvalidSourceException
-     * @throws FetchException
-     * @throws ConversionException
-     * @throws StoreException
+     * Fetches items and converts them, without importing them into the store.
+     *
+     * @param FetchQuery $query The fetch query.
+     * @return FetchResult The result of the fetch.
+     *
+     * @throws InvalidSourceException If the catalog rejected the source in the query.
+     * @throws FetchException If an error occurred while fetching the items.
+     * @throws ConversionException If an error occurred while converting the items.
+     * @throws StoreException If an error occurred while reading existing items from the store.
      */
     public function fetch(FetchQuery $query): FetchResult
     {
@@ -83,10 +93,12 @@ class Engine
     }
 
     /**
-     * @throws ConversionException
-     * @throws FetchException
-     * @throws InvalidSourceException
-     * @throws StoreException
+     * Fetches items, converts them, and imports them into the store.
+     *
+     * @throws InvalidSourceException If the catalog rejected the source in the query.
+     * @throws FetchException If an error occurred while fetching the items.
+     * @throws ConversionException If an error occurred while converting the items.
+     * @throws StoreException If an error occurred while importing the items into the store.
      */
     public function import(FetchQuery $query): FetchResult
     {
