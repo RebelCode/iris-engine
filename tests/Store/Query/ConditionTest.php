@@ -22,6 +22,6 @@ class ConditionTest extends TestCase
         $condition = new Condition($relation, $criteria);
 
         self::assertEquals($relation, $condition->relation);
-        self::assertSame($criteria, $condition->criteria);
+        self::assertSame($criteria, $condition->operands);
     }
 }

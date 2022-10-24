@@ -18,7 +18,7 @@ class Condition implements Criterion
     public $relation;
 
     /** @var Criterion[] */
-    public $criteria;
+    public $operands;
 
     /**
      * Constructor.
