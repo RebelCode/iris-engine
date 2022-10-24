@@ -32,4 +32,26 @@ class Order
         $this->type = $type;
         $this->field = $field;
     }
+
+    /**
+     * Creates an ascending order.
+     *
+     * @param string $field The key of the {@link Item::data} field to order by.
+     * @return Order The order instance.
+     */
+    public static function asc(string $field): Order
+    {
+        return new Order(self::ASC, $field);
+    }
+
+    /**
+     * Creates a descending order.
+     *
+     * @param string $field The key of the {@link Item::data} field to order by.
+     * @return Order The order instance.
+     */
+    public static function desc(string $field): Order
+    {
+        return new Order(self::DESC, $field);
+    }
 }

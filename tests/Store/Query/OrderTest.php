@@ -19,4 +19,22 @@ class OrderTest extends TestCase
         self::assertEquals($type, $order->type);
         self::assertEquals($field, $order->field);
     }
+
+    public function testStaticAscConstructor()
+    {
+        $field = 'foo';
+        $order = Order::asc($field);
+
+        self::assertEquals(Order::ASC, $order->type);
+        self::assertEquals($field, $order->field);
+    }
+
+    public function testStaticDescConstructor()
+    {
+        $field = 'foo';
+        $order = Order::desc($field);
+
+        self::assertEquals(Order::DESC, $order->type);
+        self::assertEquals($field, $order->field);
+    }
 }
