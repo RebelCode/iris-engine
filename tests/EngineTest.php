@@ -118,7 +118,7 @@ class EngineTest extends TestCase
                 ->willReturn($result);
         $fetchStrategy->expects($this->once())->method('getCatalog')->with($query->source)->willReturn($catalog);
         $converter->expects($this->once())->method('convertMultiple')->with($items)->willReturn($items);
-        $store->expects($this->once())->method('insertMultiple')->with($items)->willReturn($storedItems);
+        $store->expects($this->once())->method('insert')->with($items)->willReturn($storedItems);
 
         $result = $engine->import($query);
 

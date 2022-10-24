@@ -73,7 +73,7 @@ class ImporterTest extends TestCase
 
         // Store mock
         $store = $this->createMock(Store::class);
-        $this->expect(!$isLocked, $store, 'insertMultiple', [$fetchItems], $insertItems);
+        $this->expect(!$isLocked, $store, 'insert', [$fetchItems], $insertItems);
 
         // Engine mock
         $engine = $this->createMock(Engine::class);
@@ -149,7 +149,7 @@ class ImporterTest extends TestCase
         ];
 
         $store = $this->createMock(Store::class);
-        $store->method('insertMultiple')->willReturnArgument(0);
+        $store->method('insert')->willReturnArgument(0);
 
         $engine = $this->createConfiguredMock(Engine::class, ['getStore' => $store]);
         $engine->method('fetch')->willReturn(...$fetchResults);

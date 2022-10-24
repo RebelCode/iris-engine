@@ -106,7 +106,7 @@ class Importer
 
             // Run the import
             $fetchResult = $this->engine->fetch($query);
-            $insertedItems = $this->engine->getStore()->insertMultiple($fetchResult->items);
+            $insertedItems = $this->engine->getStore()->insert($fetchResult->items);
 
             $result = new FetchResult(
                 $insertedItems,

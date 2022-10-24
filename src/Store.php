@@ -14,18 +14,7 @@ interface Store
     public const IGNORE_FAIL = 1;
 
     /**
-     * Inserts a single item into the store.
-     *
-     * @param Item $item The item to store.
-     *
-     * @return Item The new item with a updated {@link Item::$localId} field.
-     *
-     * @throws StoreException If an error occurred.
-     */
-    public function insert(Item $item): Item;
-
-    /**
-     * Inserts multiple items into the store.
+     * Inserts items into the store.
      *
      * @param Item[] $items The items to insert.
      * @param int $mode The mode. See {@link Store::THROW_ON_FAIL} and {@link Store::IGNORE_FAIL}.
@@ -34,7 +23,7 @@ interface Store
      *
      * @throws StoreException If an error occurred.
      */
-    public function insertMultiple(array $items, int $mode = self::THROW_ON_FAIL): array;
+    public function insert(array $items, int $mode = self::THROW_ON_FAIL): array;
 
     /**
      * Retrieves a single item from storage by ID.
@@ -85,18 +74,7 @@ interface Store
     public function query(Store\Query $query): array;
 
     /**
-     * Deletes a single item by its ID.
-     *
-     * @param string $id The ID of the item to delete.
-     *
-     * @return bool True if the item was deleted, false if the ID did not correspond to a stored item.
-     *
-     * @throws StoreException If an error occurred.
-     */
-    public function delete(string $id): bool;
-
-    /**
-     * Deletes a list of items by their IDs.
+     * Deletes items with specific IDs.
      *
      * @param string[] $ids The list of the IDs of the items to be deleted.
      *
@@ -105,7 +83,7 @@ interface Store
      *
      * @throws StoreException If an error occurred.
      */
-    public function deleteMultiple(array $ids): int;
+    public function delete(array $ids): int;
 
     /**
      * Deletes items that belong to any of the given sources.
