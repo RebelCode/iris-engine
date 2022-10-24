@@ -6,14 +6,14 @@ namespace RebelCode\Iris\Test\Func;
 
 use PHPUnit\Framework\TestCase;
 use RebelCode\Iris\Aggregator;
+use RebelCode\Iris\Catalog;
 use RebelCode\Iris\Converter;
 use RebelCode\Iris\Data\Item;
 use RebelCode\Iris\Data\Source;
 use RebelCode\Iris\Engine;
-use RebelCode\Iris\Fetcher\Catalog;
 use RebelCode\Iris\Fetcher\FetchQuery;
 use RebelCode\Iris\Fetcher\FetchResult;
-use RebelCode\Iris\Fetcher\FetchStrategy;
+use RebelCode\Iris\FetchStrategy;
 use RebelCode\Iris\Store;
 
 class EngineTest extends TestCase

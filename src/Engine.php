@@ -10,7 +10,6 @@ use RebelCode\Iris\Exception\InvalidSourceException;
 use RebelCode\Iris\Exception\StoreException;
 use RebelCode\Iris\Fetcher\FetchQuery;
 use RebelCode\Iris\Fetcher\FetchResult;
-use RebelCode\Iris\Fetcher\FetchStrategy;
 
 class Engine
 {

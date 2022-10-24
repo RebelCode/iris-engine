@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace RebelCode\Iris\Fetcher;
+namespace RebelCode\Iris;
 
 use RebelCode\Iris\Data\Source;
 
