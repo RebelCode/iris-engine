@@ -4,8 +4,7 @@ declare(strict_types=1);
 
 namespace RebelCode\Iris\Importer;
 
-use RebelCode\Iris\Fetcher\FetchQuery;
-use RebelCode\Iris\Fetcher\FetchResult;
+use RebelCode\Iris\FetchQuery;
 
 interface ImportScheduler
 {

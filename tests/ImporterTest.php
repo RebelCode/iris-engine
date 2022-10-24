@@ -3,13 +3,13 @@
 namespace RebelCode\Iris\Test\Func;
 
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use RebelCode\Iris\Data\Item;
 use RebelCode\Iris\Data\Source;
 use RebelCode\Iris\Engine;
-use RebelCode\Iris\Fetcher\FetchQuery;
-use RebelCode\Iris\Fetcher\FetchResult;
+use RebelCode\Iris\FetchQuery;
+use RebelCode\Iris\FetchResult;
 use RebelCode\Iris\Importer;
-use PHPUnit\Framework\TestCase;
 use RebelCode\Iris\Store;
 use RebelCode\Iris\Utils\Marker;
 use RebelCode\Iris\Utils\NullMarker;

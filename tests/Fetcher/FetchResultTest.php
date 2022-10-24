@@ -7,7 +7,7 @@ namespace RebelCode\Iris\Test\Func\Fetcher;
 use PHPUnit\Framework\TestCase;
 use RebelCode\Iris\Data\Item;
 use RebelCode\Iris\Data\Source;
-use RebelCode\Iris\Fetcher\FetchResult;
+use RebelCode\Iris\FetchResult;
 
 class FetchResultTest extends TestCase
 {

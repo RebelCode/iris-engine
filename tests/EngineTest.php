@@ -11,8 +11,8 @@ use RebelCode\Iris\Converter;
 use RebelCode\Iris\Data\Item;
 use RebelCode\Iris\Data\Source;
 use RebelCode\Iris\Engine;
-use RebelCode\Iris\Fetcher\FetchQuery;
-use RebelCode\Iris\Fetcher\FetchResult;
+use RebelCode\Iris\FetchQuery;
+use RebelCode\Iris\FetchResult;
 use RebelCode\Iris\FetchStrategy;
 use RebelCode\Iris\Store;
 

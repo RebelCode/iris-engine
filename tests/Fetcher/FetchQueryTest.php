@@ -7,8 +7,8 @@ namespace RebelCode\Iris\Test\Func\Fetcher;
 use PHPUnit\Framework\TestCase;
 use RebelCode\Iris\Data\Item;
 use RebelCode\Iris\Data\Source;
-use RebelCode\Iris\Fetcher\FetchQuery;
-use RebelCode\Iris\Fetcher\FetchResult;
+use RebelCode\Iris\FetchQuery;
+use RebelCode\Iris\FetchResult;
 
 class FetchQueryTest extends TestCase
 {

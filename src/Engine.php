@@ -8,8 +8,6 @@ use RebelCode\Iris\Exception\ConversionException;
 use RebelCode\Iris\Exception\FetchException;
 use RebelCode\Iris\Exception\InvalidSourceException;
 use RebelCode\Iris\Exception\StoreException;
-use RebelCode\Iris\Fetcher\FetchQuery;
-use RebelCode\Iris\Fetcher\FetchResult;
 
 class Engine
 {
