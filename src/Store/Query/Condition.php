@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace RebelCode\Iris\Store\Query;
 
 /** @psalm-immutable */
-class Condition implements Criterion
+class Condition extends BaseCriterion
 {
     public const AND = 'AND';
     public const OR = 'OR';
@@ -31,6 +31,6 @@ class Condition implements Criterion
     public function __construct(string $relation, array $criteria)
     {
         $this->relation = $relation;
-        $this->criteria = $criteria;
+        $this->operands = $criteria;
     }
 }

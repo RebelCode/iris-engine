@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace RebelCode\Iris\Store\Query;
 
 /** @psalm-immutable */
-class Expression implements Criterion
+class Expression extends BaseCriterion
 {
     public const EQUAL_TO = '=';
     public const NOT_EQUAL_TO = '!=';

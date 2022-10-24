@@ -5,10 +5,16 @@ declare(strict_types=1);
 namespace RebelCode\Iris\Test\Func\Store\Query;
 
 use PHPUnit\Framework\TestCase;
+use RebelCode\Iris\Store\Query\BaseCriterion;
 use RebelCode\Iris\Store\Query\Expression;
 
 class ExpressionTest extends TestCase
 {
+    public function testExtendsBaseCriterion()
+    {
+        self::assertInstanceOf(BaseCriterion::class, new Expression('foo', Expression::EQUAL_TO, 'bar'));
+    }
+
     public function testConstructor()
     {
         $field = 'foo';
