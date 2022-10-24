@@ -10,23 +10,23 @@ use RebelCode\Iris\Converter;
 use RebelCode\Iris\Data\Item;
 use RebelCode\Iris\Data\Source;
 use RebelCode\Iris\Engine;
-use RebelCode\Iris\Fetcher;
+use RebelCode\Iris\Fetcher\Catalog;
+use RebelCode\Iris\Fetcher\FetchQuery;
 use RebelCode\Iris\Fetcher\FetchResult;
-use RebelCode\Iris\Importer;
+use RebelCode\Iris\Fetcher\FetchStrategy;
 use RebelCode\Iris\Store;
 
 class EngineTest extends TestCase
 {
     public function testConstructorAndGetters()
     {
-        $fetcher = $this->createMock(Fetcher::class);
+        $fetchStrategy = $this->createMock(FetchStrategy::class);
         $converter = $this->createMock(Converter::class);
         $aggregator = $this->createMock(Aggregator::class);
         $store = $this->createMock(Store::class);
 
-        $engine = new Engine($fetcher, $converter, $aggregator, $store);
+        $engine = new Engine($fetchStrategy, $converter, $aggregator, $store);
 
-        self::assertSame($fetcher, $engine->getFetcher());
         self::assertSame($converter, $engine->getConverter());
         self::assertSame($aggregator, $engine->getAggregator());
         self::assertSame($store, $engine->getStore());
@@ -34,16 +34,17 @@ class EngineTest extends TestCase
 
     public function testFetch()
     {
-        $fetcher = $this->createMock(Fetcher::class);
+        $fetchStrategy = $this->createMock(FetchStrategy::class);
+        $catalog = $this->createMock(Catalog::class);
         $converter = $this->createMock(Converter::class);
         $aggregator = $this->createMock(Aggregator::class);
         $store = $this->createMock(Store::class);
-        $engine = new Engine($fetcher, $converter, $aggregator, $store);
+        $engine = new Engine($fetchStrategy, $converter, $aggregator, $store);
 
         $source = $this->createMock(Source::class);
         $cursor = 'ABC123';
         $count = 100;
-        $query = new Fetcher\FetchQuery($source, $cursor, $count);
+        $query = new FetchQuery($source, $cursor, $count);
 
         $fetchItems = [
             $this->createMock(Item::class),
@@ -63,7 +64,11 @@ class EngineTest extends TestCase
         $errors = ['Error!'];
         $fetchResult = new FetchResult($fetchItems, $source, $cSize, $nCursor, $pCursor, $errors);
 
-        $fetcher->expects($this->once())->method('fetch')->with($source, $cursor, $count)->willReturn($fetchResult);
+        $catalog->expects($this->once())
+                ->method('query')
+                ->with($query->source, $query->cursor, $query->count)
+                ->willReturn($fetchResult);
+        $fetchStrategy->expects($this->once())->method('getCatalog')->with($query->source)->willReturn($catalog);
         $converter->expects($this->once())->method('convertMultiple')->with($fetchItems)->willReturn($convItems);
 
         $result = $engine->fetch($query);
@@ -77,16 +82,17 @@ class EngineTest extends TestCase
 
     public function testImport()
     {
-        $fetcher = $this->createMock(Fetcher::class);
+        $fetchStrategy = $this->createMock(FetchStrategy::class);
+        $catalog = $this->createMock(Catalog::class);
         $converter = $this->createMock(Converter::class);
         $aggregator = $this->createMock(Aggregator::class);
         $store = $this->createMock(Store::class);
-        $engine = new Engine($fetcher, $converter, $aggregator, $store);
+        $engine = new Engine($fetchStrategy, $converter, $aggregator, $store);
 
         $source = $this->createMock(Source::class);
         $cursor = 'ABC123';
         $count = 100;
-        $query = new Fetcher\FetchQuery($source, $cursor, $count);
+        $query = new FetchQuery($source, $cursor, $count);
 
         $items = [
             $this->createMock(Item::class),
@@ -106,7 +112,11 @@ class EngineTest extends TestCase
         $errors = ['Error!'];
         $result = new FetchResult($items, $source, $cSize, $nCursor, $pCursor, $errors);
 
-        $fetcher->expects($this->once())->method('fetch')->with($source, $cursor, $count)->willReturn($result);
+        $catalog->expects($this->once())
+                ->method('query')
+                ->with($query->source, $query->cursor, $query->count)
+                ->willReturn($result);
+        $fetchStrategy->expects($this->once())->method('getCatalog')->with($query->source)->willReturn($catalog);
         $converter->expects($this->once())->method('convertMultiple')->with($items)->willReturn($items);
         $store->expects($this->once())->method('insertMultiple')->with($items)->willReturn($storedItems);
 

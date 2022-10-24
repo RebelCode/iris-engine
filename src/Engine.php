@@ -10,11 +10,12 @@ use RebelCode\Iris\Exception\InvalidSourceException;
 use RebelCode\Iris\Exception\StoreException;
 use RebelCode\Iris\Fetcher\FetchQuery;
 use RebelCode\Iris\Fetcher\FetchResult;
+use RebelCode\Iris\Fetcher\FetchStrategy;
 
 class Engine
 {
-    /** @var Fetcher */
-    protected $fetcher;
+    /** @var FetchStrategy */
+    protected $fetchStrategy;
 
     /** @var Converter */
     protected $converter;
@@ -29,20 +30,15 @@ class Engine
      * Constructor.
      */
     public function __construct(
-        Fetcher $fetcher,
+        FetchStrategy $fetchStrategy,
         Converter $converter,
         Aggregator $aggregator,
         Store $store
     ) {
-        $this->fetcher = $fetcher;
+        $this->fetchStrategy = $fetchStrategy;
         $this->converter = $converter;
         $this->aggregator = $aggregator;
         $this->store = $store;
-    }
-
-    public function getFetcher(): Fetcher
-    {
-        return $this->fetcher;
     }
 
     public function getConverter(): Converter
@@ -68,7 +64,13 @@ class Engine
      */
     public function fetch(FetchQuery $query): FetchResult
     {
-        $result = $this->fetcher->fetch($query->source, $query->cursor, $query->count);
+        $catalog = $this->fetchStrategy->getCatalog($query->source);
+
+        if ($catalog === null) {
+            throw new InvalidSourceException("No catalog found for source \"{$query->source}\"", $query->source);
+        }
+
+        $result = $catalog->query($query->source, $query->cursor, $query->count);
         $convItems = $this->converter->convertMultiple($result->items);
 
         return new FetchResult(
