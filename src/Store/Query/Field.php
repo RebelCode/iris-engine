@@ -14,8 +14,8 @@ class Field
     public const ID = 'id';
     public const LOCAL_ID = 'localId';
     public const SOURCE = 'source';
-    protected const TYPE_PROP = 'prop';
-    protected const TYPE_DATA = 'data';
+    public const TYPE_PROP = 'prop';
+    public const TYPE_DATA = 'data';
 
     /** @var string */
     public $type;
