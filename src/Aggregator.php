@@ -44,7 +44,7 @@ class Aggregator
             ? $query->withCount(null)->withOffset(0)
             : $query;
 
-        $items = $this->store->query($storeQuery);
+        $items = $this->store->query($storeQuery)->getItems();
         $this->removeDuplicates($items);
 
         $storeTotal = count($items);

@@ -33,10 +33,10 @@ class Converter
     public function convert(Item $item): ?Item
     {
         $query = StoreQuery::forIds([$item->id])->withCount(1);
-        $existing = $this->store->query($query);
+        $existing = $this->store->query($query)->getFirst();
 
         try {
-            return $this->doConversion($item, $existing[0] ?? null);
+            return $this->doConversion($item, $existing);
         } catch (ConversionShortCircuit $e) {
             return null;
         }
@@ -56,12 +56,7 @@ class Converter
             return $item->id;
         }, $items);
 
-        $existingList = $this->store->query(StoreQuery::forIds($itemIds));
-
-        $existingMap = [];
-        foreach ($existingList as $storeItem) {
-            $existingMap[$storeItem->id] = $storeItem;
-        }
+        $existingMap = $this->store->query(StoreQuery::forIds($itemIds))->getMap();
 
         $items = $this->strategy->beforeBatch($items, $existingMap);
 

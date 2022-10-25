@@ -1,0 +1,84 @@
+<?php
+
+namespace RebelCode\Iris;
+
+use Generator;
+use RebelCode\Iris\Data\Item;
+
+class StoreResult
+{
+    /** @var list<Item> */
+    protected $items;
+
+    /** @var array<string, Item>|null */
+    protected $_mapCache = null;
+
+    /**
+     * Constructor.
+     *
+     * @param Item[] $items The list of items.
+     */
+    public function __construct(array $items)
+    {
+        $this->items = array_values($items);
+    }
+
+    /**
+     * Retrieves the items in the result.
+     *
+     * @return list<Item>
+     */
+    public function getItems(): array
+    {
+        return $this->items;
+    }
+
+    /**
+     * Retrieves the items in the result as a generator.
+     *
+     * @return Generator<Item>
+     */
+    public function getGenerator(): Generator
+    {
+        yield from $this->items;
+    }
+
+    /**
+     * Retrieves the first item in the result.
+     *
+     * @return Item|null The item, or null if the result is empty.
+     */
+    public function getFirst(): ?Item
+    {
+        return $this->items[0] ?? null;
+    }
+
+    /**
+     * Retrieves the items in the result as a mapping of IDs to items.
+     *
+     * @return array<string, Item>
+     */
+    public function getMap(): array
+    {
+        if ($this->_mapCache === null) {
+            $this->_mapCache = [];
+
+            foreach ($this->items as $item) {
+                $this->_mapCache[$item->id] = $item;
+            }
+        }
+
+        return $this->_mapCache;
+    }
+
+    /**
+     * Retrieves the item with a specific ID from the result.
+     *
+     * @param string $id The ID of the item to retrieve.
+     * @return Item|null The item with the given ID, or null if no such item exists.
+     */
+    public function getItem(string $id): ?Item
+    {
+        return $this->getMap()[$id] ?? null;
+    }
+}

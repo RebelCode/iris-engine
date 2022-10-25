@@ -11,6 +11,7 @@ use RebelCode\Iris\FetchQuery;
 use RebelCode\Iris\FetchResult;
 use RebelCode\Iris\Importer;
 use RebelCode\Iris\Store;
+use RebelCode\Iris\StoreResult;
 use RebelCode\Iris\Utils\Marker;
 use RebelCode\Iris\Utils\NullMarker;
 
@@ -73,7 +74,7 @@ class ImporterTest extends TestCase
 
         // Store mock
         $store = $this->createMock(Store::class);
-        $this->expect(!$isLocked, $store, 'insert', [$fetchItems], $insertItems);
+        $this->expect(!$isLocked, $store, 'insert', [$fetchItems], new StoreResult($insertItems));
 
         // Engine mock
         $engine = $this->createMock(Engine::class);
@@ -149,7 +150,9 @@ class ImporterTest extends TestCase
         ];
 
         $store = $this->createMock(Store::class);
-        $store->method('insert')->willReturnArgument(0);
+        $store->method('insert')->willReturnCallback(function(array $items) {
+            return new StoreResult($items);
+        });
 
         $engine = $this->createConfiguredMock(Engine::class, ['getStore' => $store]);
         $engine->method('fetch')->willReturn(...$fetchResults);

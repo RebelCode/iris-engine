@@ -15,6 +15,7 @@ use RebelCode\Iris\FetchQuery;
 use RebelCode\Iris\FetchResult;
 use RebelCode\Iris\FetchStrategy;
 use RebelCode\Iris\Store;
+use RebelCode\Iris\StoreResult;
 
 class EngineTest extends TestCase
 {
@@ -118,7 +119,7 @@ class EngineTest extends TestCase
                 ->willReturn($result);
         $fetchStrategy->expects($this->once())->method('getCatalog')->with($query->source)->willReturn($catalog);
         $converter->expects($this->once())->method('convertMultiple')->with($items)->willReturn($items);
-        $store->expects($this->once())->method('insert')->with($items)->willReturn($storedItems);
+        $store->expects($this->once())->method('insert')->with($items)->willReturn(new StoreResult($storedItems));
 
         $result = $engine->import($query);
 

@@ -17,23 +17,21 @@ interface Store
      *
      * @param Item[] $items The items to insert.
      * @param int $mode The mode. See {@link Store::THROW_ON_FAIL} and {@link Store::IGNORE_FAIL}.
-     *
-     * @return Item[] The new items with updated {@link Item::$localId} fields.
+     * @return StoreResult The result, containing the same items but with updated {@link Item::$localId} fields.
      *
      * @throws StoreException If an error occurred.
      */
-    public function insert(array $items, int $mode = self::THROW_ON_FAIL): array;
+    public function insert(array $items, int $mode = self::THROW_ON_FAIL): StoreResult;
 
     /**
      * Retrieves items based on a given query.
      *
      * @param StoreQuery $query The query.
-     *
-     * @return Item[] A list of items that satisfy and conform to the given query.
+     * @return StoreResult The result.
      *
      * @throws StoreException If an error occurred.
      */
-    public function query(StoreQuery $query): array;
+    public function query(StoreQuery $query): StoreResult;
 
     /**
      * Deletes items that match a given query.

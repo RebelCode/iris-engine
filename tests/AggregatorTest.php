@@ -13,6 +13,7 @@ use RebelCode\Iris\Data\Item;
 use RebelCode\Iris\Data\Source;
 use RebelCode\Iris\Store;
 use RebelCode\Iris\StoreQuery;
+use RebelCode\Iris\StoreResult;
 
 class AggregatorTest extends TestCase
 {
@@ -52,7 +53,7 @@ class AggregatorTest extends TestCase
             new Item('3', 3, [$source2]),
         ];
 
-        $store->expects($this->once())->method('query')->with($query)->willReturn($items);
+        $store->expects($this->once())->method('query')->with($query)->willReturn(new StoreResult($items));
 
         foreach ($preProcessors as $processor) {
             $processor->expects($this->once())->method('process')->with($items, $feed, $query);
@@ -147,7 +148,7 @@ class AggregatorTest extends TestCase
             $itemsWithDupes[2],
         ];
 
-        $store->expects($this->once())->method('query')->with($query)->willReturn($itemsWithDupes);
+        $store->expects($this->once())->method('query')->with($query)->willReturn(new StoreResult($itemsWithDupes));
 
         foreach ($preProcessors as $processor) {
             $processor->expects($this->once())->method('process')->with($itemsNoDupes, $feed, $query);
@@ -208,7 +209,7 @@ class AggregatorTest extends TestCase
             $storeItems[2],
         ];
 
-        $store->expects($this->once())->method('query')->with($query)->willReturn($storeItems);
+        $store->expects($this->once())->method('query')->with($query)->willReturn(new StoreResult($storeItems));
 
         $preProcessors[1]->expects($this->once())->method('process')->with($processedItems, $feed, $query);
         foreach ($postProcessors as $processor) {
@@ -266,7 +267,7 @@ class AggregatorTest extends TestCase
             $storeItems[2],
         ];
 
-        $store->expects($this->once())->method('query')->with($query)->willReturn($storeItems);
+        $store->expects($this->once())->method('query')->with($query)->willReturn(new StoreResult($storeItems));
 
         foreach ($preProcessors as $processor) {
             $processor->expects($this->once())->method('process')->with($storeItems, $feed, $query);
@@ -329,7 +330,7 @@ class AggregatorTest extends TestCase
             $preProcessedItems[0],
         ];
 
-        $store->expects($this->once())->method('query')->with($query)->willReturn($storeItems);
+        $store->expects($this->once())->method('query')->with($query)->willReturn(new StoreResult($storeItems));
 
         $preProcessors[1]->expects($this->once())->method('process')->with($preProcessedItems, $feed, $query);
         $postProcessors[1]->expects($this->once())->method('process')->with($postProcessedItems, $feed, $query);
@@ -395,7 +396,7 @@ class AggregatorTest extends TestCase
             $processedItems[2],
         ];
 
-        $store->expects($this->once())->method('query')->with($query)->willReturn($storeItems);
+        $store->expects($this->once())->method('query')->with($query)->willReturn(new StoreResult($storeItems));
 
         $aggregator = new Aggregator($store, $strategy);
         $result = $aggregator->aggregate($feed, $count, $offset);
@@ -435,7 +436,7 @@ class AggregatorTest extends TestCase
             $storeItems[2],
         ];
 
-        $store->expects($this->once())->method('query')->with($storeQuery)->willReturn($storeItems);
+        $store->expects($this->once())->method('query')->with($storeQuery)->willReturn(new StoreResult($storeItems));
 
         $aggregator = new Aggregator($store, $strategy);
         $result = $aggregator->aggregate($feed, $count, $offset);
