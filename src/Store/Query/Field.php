@@ -60,10 +60,11 @@ class Field
     /**
      * Returns a field instance that represents the ID prop of an item.
      *
-     * @return static
+     * @return self
      */
     public static function id(): self
     {
+        /** @var Field|null $cache */
         static $cache = null;
         return $cache ?? $cache = self::prop(self::ID);
     }
@@ -71,10 +72,11 @@ class Field
     /**
      * Returns a field instance that represents the local ID prop of an item.
      *
-     * @return static
+     * @return self
      */
     public static function localId(): self
     {
+        /** @var Field|null $cache */
         static $cache = null;
         return $cache ?? $cache = self::prop(self::LOCAL_ID);
     }
@@ -82,10 +84,11 @@ class Field
     /**
      * Returns a field instance that represents the source prop of an item.
      *
-     * @return static
+     * @return self
      */
     public static function source(): self
     {
+        /** @var Field|null $cache */
         static $cache = null;
         return $cache ?? $cache = self::prop(self::SOURCE);
     }
