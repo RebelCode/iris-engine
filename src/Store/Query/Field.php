@@ -56,4 +56,37 @@ class Field
     {
         return new self(self::TYPE_DATA, $key);
     }
+
+    /**
+     * Returns a field instance that represents the ID prop of an item.
+     *
+     * @return static
+     */
+    public static function id(): self
+    {
+        static $cache = null;
+        return $cache ?? $cache = self::prop(self::ID);
+    }
+
+    /**
+     * Returns a field instance that represents the local ID prop of an item.
+     *
+     * @return static
+     */
+    public static function localId(): self
+    {
+        static $cache = null;
+        return $cache ?? $cache = self::prop(self::LOCAL_ID);
+    }
+
+    /**
+     * Returns a field instance that represents the source prop of an item.
+     *
+     * @return static
+     */
+    public static function source(): self
+    {
+        static $cache = null;
+        return $cache ?? $cache = self::prop(self::SOURCE);
+    }
 }

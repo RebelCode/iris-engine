@@ -34,4 +34,28 @@ class FieldTest extends TestCase
         self::assertEquals(Field::TYPE_DATA, $field->type);
         self::assertEquals($name, $field->name);
     }
+
+    public function testCreateId()
+    {
+        $field = Field::id();
+
+        self::assertEquals(Field::TYPE_PROP, $field->type);
+        self::assertEquals(Field::ID, $field->name);
+    }
+
+    public function testCreateLocalId()
+    {
+        $field = Field::localId();
+
+        self::assertEquals(Field::TYPE_PROP, $field->type);
+        self::assertEquals(Field::LOCAL_ID, $field->name);
+    }
+
+    public function testCreateSource()
+    {
+        $field = Field::source();
+
+        self::assertEquals(Field::TYPE_PROP, $field->type);
+        self::assertEquals(Field::SOURCE, $field->name);
+    }
 }
