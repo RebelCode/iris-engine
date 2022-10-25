@@ -5,14 +5,14 @@ declare(strict_types=1);
 namespace RebelCode\Iris\Aggregator;
 
 use RebelCode\Iris\Data\Feed;
-use RebelCode\Iris\Store\Query;
+use RebelCode\Iris\Store\StoreQuery;
 
 interface AggregationStrategy
 {
     /**
      * Retrieves the query that the aggregator will use to obtain the items from the store.
      */
-    public function getFeedQuery(Feed $feed, ?int $count = null, int $offset = 0): ?Query;
+    public function getFeedQuery(Feed $feed, ?int $count = null, int $offset = 0): ?StoreQuery;
 
     /**
      * Retrieves the pre-processors to use for a given feed.
@@ -25,7 +25,7 @@ interface AggregationStrategy
      *
      * @return ItemProcessor[]
      */
-    public function getPreProcessors(Feed $feed, Query $query): array;
+    public function getPreProcessors(Feed $feed, StoreQuery $query): array;
 
     /**
      * Retrieves the post-processors to use for a given feed.
@@ -39,7 +39,7 @@ interface AggregationStrategy
      *
      * @return ItemProcessor[]
      */
-    public function getPostProcessors(Feed $feed, Query $query): array;
+    public function getPostProcessors(Feed $feed, StoreQuery $query): array;
 
     /**
      * Whether the aggregator should apply pagination manually after post-processing.
@@ -56,5 +56,5 @@ interface AggregationStrategy
      * @return bool If true, the aggregator will manually apply pagination to the list of items. If false, no pagination
      *              will be applied by the aggregator.
      */
-    public function doManualPagination(Feed $feed, Query $query): bool;
+    public function doManualPagination(Feed $feed, StoreQuery $query): bool;
 }

@@ -9,7 +9,6 @@ use RebelCode\Iris\Aggregator\AggregationStrategy;
 use RebelCode\Iris\Data\Feed;
 use RebelCode\Iris\Data\Item;
 use RebelCode\Iris\Exception\StoreException;
-use RebelCode\Iris\Store\Query;
 
 class Aggregator
 {
@@ -42,7 +41,7 @@ class Aggregator
         $manualPagination = $this->strategy->doManualPagination($feed, $query);
 
         $storeQuery = $manualPagination
-            ? new Query($query->sources, $query->order, $query->condition)
+            ? $query->withCount(null)->withOffset(0)
             : $query;
 
         $items = $this->store->query($storeQuery);

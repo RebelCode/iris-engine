@@ -9,6 +9,7 @@ use RebelCode\Iris\Converter;
 use RebelCode\Iris\Data\Item;
 use RebelCode\Iris\Data\Source;
 use RebelCode\Iris\Store;
+use RebelCode\Iris\Store\StoreQuery;
 
 class ConverterTest extends TestCase
 {
@@ -22,7 +23,7 @@ class ConverterTest extends TestCase
         $convertedItem = new Item('c1', 1, [$source]);
         $finalizedItem = new Item('f1', 1, [$source]);
 
-        $store->expects($this->once())->method('get')->with($inputItem->id)->willReturn(null);
+        $store->expects($this->once())->method('query')->willReturn([]);
         $strategy->expects($this->once())->method('convert')->with($inputItem)->willReturn($convertedItem);
         $strategy->expects($this->never())->method('reconcile');
         $strategy->expects($this->once())->method('finalize')->with($convertedItem)->willReturn($finalizedItem);
@@ -41,7 +42,7 @@ class ConverterTest extends TestCase
         $source = $this->createMock(Source::class);
         $inputItem = new Item('1', 1, [$source]);
 
-        $store->expects($this->once())->method('get')->with($inputItem->id)->willReturn(null);
+        $store->expects($this->once())->method('query')->willReturn([]);
         $strategy->expects($this->once())->method('convert')->with($inputItem)->willReturn(null);
         $strategy->expects($this->never())->method('reconcile');
         $strategy->expects($this->never())->method('finalize');
@@ -61,7 +62,7 @@ class ConverterTest extends TestCase
         $inputItem = new Item('1', 1, [$source]);
         $convertedItem = new Item('c1', 1, [$source]);
 
-        $store->expects($this->once())->method('get')->with($inputItem->id)->willReturn(null);
+        $store->expects($this->once())->method('query')->willReturn([]);
         $strategy->expects($this->once())->method('convert')->with($inputItem)->willReturn($convertedItem);
         $strategy->expects($this->never())->method('reconcile');
         $strategy->expects($this->once())->method('finalize')->with($convertedItem)->willReturn(null);
@@ -84,7 +85,7 @@ class ConverterTest extends TestCase
         $reconciledItem = new Item('r1', 1, [$source]);
         $finalizedItem = new Item('f1', 1, [$source]);
 
-        $store->expects($this->once())->method('get')->with($inputItem->id)->willReturn($existingItem);
+        $store->expects($this->once())->method('query')->willReturn([$existingItem]);
         $strategy->expects($this->once())->method('convert')->with($inputItem)->willReturn($convertedItem);
         $strategy->expects($this->once())
                  ->method('reconcile')
@@ -108,7 +109,7 @@ class ConverterTest extends TestCase
         $existingItem = new Item('e1', 1, [$source]);
         $convertedItem = new Item('c1', 1, [$source]);
 
-        $store->expects($this->once())->method('get')->with($inputItem->id)->willReturn($existingItem);
+        $store->expects($this->once())->method('query')->willReturn([$existingItem]);
         $strategy->expects($this->once())->method('convert')->with($inputItem)->willReturn($convertedItem);
         $strategy->expects($this->once())
                  ->method('reconcile')
@@ -134,7 +135,8 @@ class ConverterTest extends TestCase
             new Item('3', 3, [$source]),
         ];
 
-        $store->expects($this->once())->method('getMultiple')->with(['1', '2', '3'])->willReturn([]);
+        $query = StoreQuery::forIds(['1', '2', '3']);
+        $store->expects($this->once())->method('query')->with($query)->willReturn([]);
 
         $strategy->expects($this->once())->method('beforeBatch')->willReturnArgument(0);
         $strategy->expects($this->exactly(3))->method('convert')->willReturnArgument(0);
@@ -165,7 +167,8 @@ class ConverterTest extends TestCase
             $items[2],
         ];
 
-        $store->expects($this->once())->method('getMultiple')->with(['1', '2', '3'])->willReturn([]);
+        $query = StoreQuery::forIds(['1', '2', '3']);
+        $store->expects($this->once())->method('query')->with($query)->willReturn([]);
 
         $strategy->expects($this->once())->method('beforeBatch')->with($items)->willReturn($changed);
         $strategy->expects($this->exactly(3))->method('convert')->willReturnArgument(0);
@@ -196,7 +199,8 @@ class ConverterTest extends TestCase
             $items[2],
         ];
 
-        $store->expects($this->once())->method('getMultiple')->with(['1', '2', '3'])->willReturn([]);
+        $query = StoreQuery::forIds(['1', '2', '3']);
+        $store->expects($this->once())->method('query')->with($query)->willReturn([]);
 
         $strategy->expects($this->once())->method('beforeBatch')->willReturnArgument(0);
         $strategy->expects($this->exactly(3))->method('convert')->willReturnArgument(0);
@@ -226,7 +230,8 @@ class ConverterTest extends TestCase
             $items[2],
         ];
 
-        $store->expects($this->once())->method('getMultiple')->with(['1', '2', '3'])->willReturn([]);
+        $query = StoreQuery::forIds(['1', '2', '3']);
+        $store->expects($this->once())->method('query')->with($query)->willReturn([]);
 
         $strategy->expects($this->once())->method('beforeBatch')->willReturnArgument(0);
         $strategy->expects($this->exactly(3))->method('convert')->willReturnOnConsecutiveCalls(
@@ -269,7 +274,8 @@ class ConverterTest extends TestCase
             $reconciled[2],
         ];
 
-        $store->expects($this->once())->method('getMultiple')->with(['1', '2', '3'])->willReturn($existing);
+        $query = StoreQuery::forIds(['1', '2', '3']);
+        $store->expects($this->once())->method('query')->with($query)->willReturn($existing);
 
         $strategy->expects($this->once())->method('beforeBatch')->willReturnArgument(0);
         $strategy->expects($this->once())->method('afterBatch')->willReturnArgument(0);
@@ -320,7 +326,8 @@ class ConverterTest extends TestCase
             $items[0],
         ];
 
-        $store->expects($this->once())->method('getMultiple')->with(['1', '2', '3', '4'])->willReturn([]);
+        $query = StoreQuery::forIds(['1', '2', '3', '4']);
+        $store->expects($this->once())->method('query')->with($query)->willReturn([]);
 
         $strategy->expects($this->once())->method('beforeBatch')->willReturnArgument(0);
         $strategy->expects($this->once())->method('afterBatch')->willReturnArgument(0);
@@ -364,7 +371,8 @@ class ConverterTest extends TestCase
             $items[1],
         ];
 
-        $store->expects($this->once())->method('getMultiple')->with(['1', '2', '3', '4'])->willReturn([]);
+        $query = StoreQuery::forIds(['1', '2', '3', '4']);
+        $store->expects($this->once())->method('query')->with($query)->willReturn([]);
 
         $strategy->expects($this->once())->method('beforeBatch')->willReturnArgument(0);
         $strategy->expects($this->once())->method('afterBatch')->willReturnArgument(0);

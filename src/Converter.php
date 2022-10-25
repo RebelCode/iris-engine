@@ -9,6 +9,7 @@ use RebelCode\Iris\Converter\ConversionStrategy;
 use RebelCode\Iris\Data\Item;
 use RebelCode\Iris\Exception\ConversionException;
 use RebelCode\Iris\Exception\StoreException;
+use RebelCode\Iris\Store\StoreQuery;
 
 class Converter
 {
@@ -33,8 +34,11 @@ class Converter
      */
     public function convert(Item $item): ?Item
     {
+        $query = StoreQuery::forIds([$item->id])->withCount(1);
+        $existing = $this->store->query($query);
+
         try {
-            return $this->doConversion($item, $this->store->get($item->id));
+            return $this->doConversion($item, $existing[0] ?? null);
         } catch (ConversionShortCircuit $e) {
             return null;
         }
@@ -50,12 +54,11 @@ class Converter
      */
     public function convertMultiple(array $items): array
     {
-        $existingItems = $this->store->getMultiple(
-            array_map(
-                function (Item $item) {
+        $existingItems = $this->store->query(
+            StoreQuery::forIds(
+                array_map(function (Item $item) {
                     return $item->id;
-                },
-                $items
+                }, $items)
             )
         );
 

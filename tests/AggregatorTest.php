@@ -12,7 +12,7 @@ use RebelCode\Iris\Data\Feed;
 use RebelCode\Iris\Data\Item;
 use RebelCode\Iris\Data\Source;
 use RebelCode\Iris\Store;
-use RebelCode\Iris\Store\Query;
+use RebelCode\Iris\Store\StoreQuery;
 
 class AggregatorTest extends TestCase
 {
@@ -20,7 +20,7 @@ class AggregatorTest extends TestCase
     {
         $source1 = $this->createMock(Source::class);
         $source2 = $this->createMock(Source::class);
-        $query = new Query([$source1, $source2]);
+        $query = StoreQuery::forSources([$source1, $source2]);
         $store = $this->createMock(Store::class);
         $feed = $this->createMock(Feed::class);
         $count = 9;
@@ -116,7 +116,7 @@ class AggregatorTest extends TestCase
     {
         $source1 = $this->createMock(Source::class);
         $source2 = $this->createMock(Source::class);
-        $query = new Query([$source1, $source2]);
+        $query = StoreQuery::forSources([$source1, $source2]);
         $store = $this->createMock(Store::class);
         $feed = $this->createMock(Feed::class);
         $count = 9;
@@ -170,7 +170,7 @@ class AggregatorTest extends TestCase
     {
         $source1 = $this->createMock(Source::class);
         $source2 = $this->createMock(Source::class);
-        $query = new Query([$source1, $source2]);
+        $query = StoreQuery::forSources([$source1, $source2]);
         $store = $this->createMock(Store::class);
         $feed = $this->createMock(Feed::class);
         $count = 9;
@@ -178,7 +178,7 @@ class AggregatorTest extends TestCase
 
         $preProcessors = [
             new class implements ItemProcessor {
-                public function process(array &$items, Feed $feed, Query $query): void
+                public function process(array &$items, Feed $feed, StoreQuery $query): void
                 {
                     unset($items[1]);
                     $items = array_values($items);
@@ -228,7 +228,7 @@ class AggregatorTest extends TestCase
     {
         $source1 = $this->createMock(Source::class);
         $source2 = $this->createMock(Source::class);
-        $query = new Query([$source1, $source2]);
+        $query = StoreQuery::forSources([$source1, $source2]);
         $store = $this->createMock(Store::class);
         $feed = $this->createMock(Feed::class);
         $count = 9;
@@ -241,7 +241,7 @@ class AggregatorTest extends TestCase
 
         $postProcessors = [
             new class implements ItemProcessor {
-                public function process(array &$items, Feed $feed, Query $query): void
+                public function process(array &$items, Feed $feed, StoreQuery $query): void
                 {
                     unset($items[1]);
                     $items = array_values($items);
@@ -286,14 +286,14 @@ class AggregatorTest extends TestCase
     {
         $source1 = $this->createMock(Source::class);
         $source2 = $this->createMock(Source::class);
-        $query = new Query([$source1, $source2]);
+        $query = StoreQuery::forSources([$source1, $source2]);
         $store = $this->createMock(Store::class);
         $feed = $this->createMock(Feed::class);
         $count = 9;
         $offset = 3;
 
         $removeProcessor = new class implements ItemProcessor {
-            public function process(array &$items, Feed $feed, Query $query): void
+            public function process(array &$items, Feed $feed, StoreQuery $query): void
             {
                 unset($items[1]);
                 $items = array_values($items);
@@ -350,7 +350,7 @@ class AggregatorTest extends TestCase
 
         $source1 = $this->createMock(Source::class);
         $source2 = $this->createMock(Source::class);
-        $query = new Query([$source1, $source2], null, null, $count, $offset);
+        $query = StoreQuery::forSources([$source1, $source2])->withCount($count)->withOffset($offset);
         $store = $this->createMock(Store::class);
         $feed = $this->createMock(Feed::class);
 
@@ -364,7 +364,7 @@ class AggregatorTest extends TestCase
                     $this->newItem = $newItem;
                 }
 
-                public function process(array &$items, Feed $feed, Query $query): void
+                public function process(array &$items, Feed $feed, StoreQuery $query): void
                 {
                     array_splice($items, 1, 0, [$this->newItem]);
                 }
@@ -413,8 +413,8 @@ class AggregatorTest extends TestCase
 
         $source1 = $this->createMock(Source::class);
         $source2 = $this->createMock(Source::class);
-        $query = new Query([$source1, $source2], null, null, $count, $offset);
-        $storeQuery = new Query([$source1, $source2], null, null, null, 0);
+        $query = StoreQuery::forSources([$source1, $source2])->withCount($count)->withOffset($offset);
+        $storeQuery = StoreQuery::forSources([$source1, $source2]);
         $store = $this->createMock(Store::class);
         $feed = $this->createMock(Feed::class);
 
