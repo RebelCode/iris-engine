@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace RebelCode\Iris\Test\Func\Fetcher;
+namespace RebelCode\Iris\Test\Func;
 
 use PHPUnit\Framework\TestCase;
 use RebelCode\Iris\Data\Item;
