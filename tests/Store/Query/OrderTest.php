@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace RebelCode\Iris\Test\Func\Store\Query;
 
 use PHPUnit\Framework\TestCase;
-use RebelCode\Iris\Store\Query\Order;
+use RebelCode\Iris\StoreQuery\Order;
 
 class OrderTest extends TestCase
 {

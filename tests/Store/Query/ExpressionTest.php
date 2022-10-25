@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace RebelCode\Iris\Test\Func\Store\Query;
 
 use PHPUnit\Framework\TestCase;
-use RebelCode\Iris\Store\Query\BaseCriterion;
-use RebelCode\Iris\Store\Query\Expression;
-use RebelCode\Iris\Store\Query\Field;
+use RebelCode\Iris\StoreQuery\BaseCriterion;
+use RebelCode\Iris\StoreQuery\Expression;
+use RebelCode\Iris\StoreQuery\Field;
 
 class ExpressionTest extends TestCase
 {

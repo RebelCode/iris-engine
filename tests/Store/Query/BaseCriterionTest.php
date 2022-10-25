@@ -3,10 +3,10 @@
 namespace RebelCode\Iris\Test\Func\Store\Query;
 
 use PHPUnit\Framework\TestCase;
-use RebelCode\Iris\Store\Query\Condition;
-use RebelCode\Iris\Store\Query\Criterion;
-use RebelCode\Iris\Store\Query\Expression;
-use RebelCode\Iris\Store\Query\Field;
+use RebelCode\Iris\StoreQuery\Condition;
+use RebelCode\Iris\StoreQuery\Criterion;
+use RebelCode\Iris\StoreQuery\Expression;
+use RebelCode\Iris\StoreQuery\Field;
 
 class BaseCriterionTest extends TestCase
 {

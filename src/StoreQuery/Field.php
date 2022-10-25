@@ -1,6 +1,6 @@
 <?php
 
-namespace RebelCode\Iris\Store\Query;
+namespace RebelCode\Iris\StoreQuery;
 
 use RebelCode\Iris\Data\Item;
 

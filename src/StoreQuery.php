@@ -5,10 +5,10 @@ declare(strict_types=1);
 namespace RebelCode\Iris;
 
 use RebelCode\Iris\Data\Source;
-use RebelCode\Iris\Store\Query\Criterion;
-use RebelCode\Iris\Store\Query\Expression;
-use RebelCode\Iris\Store\Query\Field;
-use RebelCode\Iris\Store\Query\Order;
+use RebelCode\Iris\StoreQuery\Criterion;
+use RebelCode\Iris\StoreQuery\Expression;
+use RebelCode\Iris\StoreQuery\Field;
+use RebelCode\Iris\StoreQuery\Order;
 
 class StoreQuery
 {

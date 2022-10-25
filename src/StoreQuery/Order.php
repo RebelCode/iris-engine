@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace RebelCode\Iris\Store\Query;
+namespace RebelCode\Iris\StoreQuery;
 
 /** @psalm-immutable */
 class Order

@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace RebelCode\Iris\Test\Func\Store\Query;
 
 use PHPUnit\Framework\TestCase;
-use RebelCode\Iris\Store\Query\BaseCriterion;
-use RebelCode\Iris\Store\Query\Condition;
-use RebelCode\Iris\Store\Query\Criterion;
+use RebelCode\Iris\StoreQuery\BaseCriterion;
+use RebelCode\Iris\StoreQuery\Condition;
+use RebelCode\Iris\StoreQuery\Criterion;
 
 class ConditionTest extends TestCase
 {

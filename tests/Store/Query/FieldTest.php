@@ -2,8 +2,8 @@
 
 namespace RebelCode\Iris\Test\Func\Store\Query;
 
-use RebelCode\Iris\Store\Query\Field;
 use PHPUnit\Framework\TestCase;
+use RebelCode\Iris\StoreQuery\Field;
 
 class FieldTest extends TestCase
 {
