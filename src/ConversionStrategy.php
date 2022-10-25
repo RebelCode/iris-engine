@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace RebelCode\Iris\Converter;
+namespace RebelCode\Iris;
 
+use RebelCode\Iris\Converter\ConversionShortCircuit;
 use RebelCode\Iris\Data\Item;
 use RebelCode\Iris\Exception\ConversionException;
 

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace RebelCode\Iris\Test\Func;
 
 use PHPUnit\Framework\TestCase;
+use RebelCode\Iris\ConversionStrategy;
 use RebelCode\Iris\Converter;
 use RebelCode\Iris\Data\Item;
 use RebelCode\Iris\Data\Source;
@@ -16,7 +17,7 @@ class ConverterTest extends TestCase
     public function testConvert()
     {
         $store = $this->createMock(Store::class);
-        $strategy = $this->createMock(Converter\ConversionStrategy::class);
+        $strategy = $this->createMock(ConversionStrategy::class);
 
         $source = $this->createMock(Source::class);
         $inputItem = new Item('1', 1, [$source]);
@@ -37,7 +38,7 @@ class ConverterTest extends TestCase
     public function testConvertReturnsNull()
     {
         $store = $this->createMock(Store::class);
-        $strategy = $this->createMock(Converter\ConversionStrategy::class);
+        $strategy = $this->createMock(ConversionStrategy::class);
 
         $source = $this->createMock(Source::class);
         $inputItem = new Item('1', 1, [$source]);
@@ -56,7 +57,7 @@ class ConverterTest extends TestCase
     public function testFinalizeReturnsNull()
     {
         $store = $this->createMock(Store::class);
-        $strategy = $this->createMock(Converter\ConversionStrategy::class);
+        $strategy = $this->createMock(ConversionStrategy::class);
 
         $source = $this->createMock(Source::class);
         $inputItem = new Item('1', 1, [$source]);
@@ -76,7 +77,7 @@ class ConverterTest extends TestCase
     public function testReconcile()
     {
         $store = $this->createMock(Store::class);
-        $strategy = $this->createMock(Converter\ConversionStrategy::class);
+        $strategy = $this->createMock(ConversionStrategy::class);
 
         $source = $this->createMock(Source::class);
         $inputItem = new Item('1', 1, [$source]);
@@ -102,7 +103,7 @@ class ConverterTest extends TestCase
     public function testReconcileReturnsNull()
     {
         $store = $this->createMock(Store::class);
-        $strategy = $this->createMock(Converter\ConversionStrategy::class);
+        $strategy = $this->createMock(ConversionStrategy::class);
 
         $source = $this->createMock(Source::class);
         $inputItem = new Item('1', 1, [$source]);
@@ -126,7 +127,7 @@ class ConverterTest extends TestCase
     public function testConvertMultiple()
     {
         $store = $this->createMock(Store::class);
-        $strategy = $this->createMock(Converter\ConversionStrategy::class);
+        $strategy = $this->createMock(ConversionStrategy::class);
 
         $source = $this->createMock(Source::class);
         $items = [
@@ -153,7 +154,7 @@ class ConverterTest extends TestCase
     public function testConvertMultipleBeforeBatch()
     {
         $store = $this->createMock(Store::class);
-        $strategy = $this->createMock(Converter\ConversionStrategy::class);
+        $strategy = $this->createMock(ConversionStrategy::class);
 
         $source = $this->createMock(Source::class);
         $items = [
@@ -185,7 +186,7 @@ class ConverterTest extends TestCase
     public function testConvertMultipleAfterBatch()
     {
         $store = $this->createMock(Store::class);
-        $strategy = $this->createMock(Converter\ConversionStrategy::class);
+        $strategy = $this->createMock(ConversionStrategy::class);
 
         $source = $this->createMock(Source::class);
         $items = [
@@ -217,7 +218,7 @@ class ConverterTest extends TestCase
     public function testConvertMultipleFilteredItems()
     {
         $store = $this->createMock(Store::class);
-        $strategy = $this->createMock(Converter\ConversionStrategy::class);
+        $strategy = $this->createMock(ConversionStrategy::class);
 
         $source = $this->createMock(Source::class);
         $items = [
@@ -252,7 +253,7 @@ class ConverterTest extends TestCase
     public function testConvertMultipleWithReconciliation()
     {
         $store = $this->createMock(Store::class);
-        $strategy = $this->createMock(Converter\ConversionStrategy::class);
+        $strategy = $this->createMock(ConversionStrategy::class);
 
         $source = $this->createMock(Source::class);
 
@@ -311,7 +312,7 @@ class ConverterTest extends TestCase
     public function testConvertMultipleShortCircuitNoYield()
     {
         $store = $this->createMock(Store::class);
-        $strategy = $this->createMock(Converter\ConversionStrategy::class);
+        $strategy = $this->createMock(ConversionStrategy::class);
 
         $source = $this->createMock(Source::class);
         $items = [
@@ -355,7 +356,7 @@ class ConverterTest extends TestCase
     public function testConvertMultipleShortCircuitYield()
     {
         $store = $this->createMock(Store::class);
-        $strategy = $this->createMock(Converter\ConversionStrategy::class);
+        $strategy = $this->createMock(ConversionStrategy::class);
 
         $source = $this->createMock(Source::class);
         $items = [
