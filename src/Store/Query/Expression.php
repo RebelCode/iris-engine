@@ -23,7 +23,7 @@ class Expression extends BaseCriterion
     public const EXISTS = 'EXISTS';
     public const NOT_EXISTS = 'EXISTS';
 
-    /** @var string */
+    /** @var Field */
     public $field;
 
     /** @var mixed|null */
@@ -39,14 +39,14 @@ class Expression extends BaseCriterion
     /**
      * Constructor.
      *
-     * @param string $field The field that the criterion is based on.
+     * @param Field $field The field that the criterion is based on.
      * @param string $operator The criterion operator. See the class constants in {@link Expression}.
      * @param mixed|null $value Optional value to use in the criterion. Can be null for {@link Expression::EXISTS} and
      *                          {@link Expression::NOT_EXISTS} criterion.
      *
      * @psalm-param Expression::* $operator
      */
-    public function __construct(string $field, string $operator, $value = null)
+    public function __construct(Field $field, string $operator, $value = null)
     {
         $this->field = $field;
         $this->value = $value;

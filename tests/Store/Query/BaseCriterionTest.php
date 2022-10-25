@@ -6,12 +6,13 @@ use PHPUnit\Framework\TestCase;
 use RebelCode\Iris\Store\Query\Condition;
 use RebelCode\Iris\Store\Query\Criterion;
 use RebelCode\Iris\Store\Query\Expression;
+use RebelCode\Iris\Store\Query\Field;
 
 class BaseCriterionTest extends TestCase
 {
     public function testAndWithExpression()
     {
-        $expr = new Expression('foo', Expression::EQUAL_TO, 'bar');
+        $expr = new Expression(Field::data('foo'), Expression::EQUAL_TO, 'bar');
         $c1 = $this->createMock(Criterion::class);
         $c2 = $this->createMock(Criterion::class);
         $c3 = $this->createMock(Criterion::class);
@@ -24,7 +25,7 @@ class BaseCriterionTest extends TestCase
 
     public function testOrWithExpression()
     {
-        $expr = new Expression('foo', Expression::EQUAL_TO, 'bar');
+        $expr = new Expression(Field::data('foo'), Expression::EQUAL_TO, 'bar');
         $c1 = $this->createMock(Criterion::class);
         $c2 = $this->createMock(Criterion::class);
         $c3 = $this->createMock(Criterion::class);

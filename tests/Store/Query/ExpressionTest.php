@@ -7,17 +7,18 @@ namespace RebelCode\Iris\Test\Func\Store\Query;
 use PHPUnit\Framework\TestCase;
 use RebelCode\Iris\Store\Query\BaseCriterion;
 use RebelCode\Iris\Store\Query\Expression;
+use RebelCode\Iris\Store\Query\Field;
 
 class ExpressionTest extends TestCase
 {
     public function testExtendsBaseCriterion()
     {
-        self::assertInstanceOf(BaseCriterion::class, new Expression('foo', Expression::EQUAL_TO, 'bar'));
+        self::assertInstanceOf(BaseCriterion::class, new Expression(Field::data('foo'), Expression::EQUAL_TO, 'bar'));
     }
 
     public function testConstructor()
     {
-        $field = 'foo';
+        $field = Field::data('foo');
         $value = 'bar';
         $operator = Expression::EQUAL_TO;
 
