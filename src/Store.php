@@ -37,7 +37,7 @@ interface Store
      * Deletes items that match a given query.
      *
      * @param StoreQuery $query The query.
-     * @retrun int The number of items that were deleted.
+     * @return int The number of items that were deleted.
      */
     public function delete(StoreQuery $query): int;
 }
