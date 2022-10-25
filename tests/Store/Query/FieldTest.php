@@ -16,4 +16,22 @@ class FieldTest extends TestCase
         self::assertEquals($type, $field->type);
         self::assertEquals($name, $field->name);
     }
+
+    public function testCreateProp()
+    {
+        $name = 'foo';
+        $field = Field::prop($name);
+
+        self::assertEquals(Field::TYPE_PROP, $field->type);
+        self::assertEquals($name, $field->name);
+    }
+
+    public function testCreateData()
+    {
+        $name = 'foo';
+        $field = Field::data($name);
+
+        self::assertEquals(Field::TYPE_DATA, $field->type);
+        self::assertEquals($name, $field->name);
+    }
 }
