@@ -54,20 +54,23 @@ class Converter
      */
     public function convertMultiple(array $items): array
     {
-        $existingItems = $this->store->query(
-            StoreQuery::forIds(
-                array_map(function (Item $item) {
-                    return $item->id;
-                }, $items)
-            )
-        );
+        $itemIds = array_map(function (Item $item) {
+            return $item->id;
+        }, $items);
 
-        $items = $this->strategy->beforeBatch($items, $existingItems);
+        $existingList = $this->store->query(StoreQuery::forIds($itemIds));
+
+        $existingMap = [];
+        foreach ($existingList as $storeItem) {
+            $existingMap[$storeItem->id] = $storeItem;
+        }
+
+        $items = $this->strategy->beforeBatch($items, $existingMap);
 
         $convertedItems = [];
         foreach ($items as $item) {
             try {
-                $item = $this->doConversion($item, $existingItems[$item->id] ?? null);
+                $item = $this->doConversion($item, $existingMap[$item->id] ?? null);
             } catch (ConversionShortCircuit $e) {
                 $item = $e->getItem();
                 break;
@@ -82,6 +85,11 @@ class Converter
     }
 
     /**
+     * Convert a single item.
+     *
+     * @param Item $item The item to convert.
+     * @param Item|null $existing The corresponding existing item from the store, or null if the item is new.
+     *
      * @throws Exception\ConversionException
      * @throws ConversionShortCircuit
      */

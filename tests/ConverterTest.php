@@ -235,7 +235,9 @@ class ConverterTest extends TestCase
 
         $strategy->expects($this->once())->method('beforeBatch')->willReturnArgument(0);
         $strategy->expects($this->exactly(3))->method('convert')->willReturnOnConsecutiveCalls(
-            $items[0], null, $items[2]
+            $items[0],
+            null,
+            $items[2]
         );
         $strategy->expects($this->never())->method('reconcile');
         $strategy->expects($this->exactly(2))->method('finalize')->willReturnArgument(0);
@@ -253,59 +255,55 @@ class ConverterTest extends TestCase
         $strategy = $this->createMock(Converter\ConversionStrategy::class);
 
         $source = $this->createMock(Source::class);
-        $items = [
-            new Item('1', 1, [$source]),
-            new Item('2', 2, [$source]),
-            new Item('3', 3, [$source]),
-        ];
-        $existing = [
-            '1' => new Item('e1', 1, [$source]),
-            '3' => new Item('e3', 3, [$source]),
-        ];
-        $reconciled = [
-            new Item('r1', 1, [$source]),
-            null,
-            new Item('r3', 3, [$source]),
-        ];
+
+        $item1 = new Item('1', 1, [$source]);
+        $item2 = new Item('2', 2, [$source]);
+        $item3 = new Item('3', 3, [$source]);
+
+        $existing1 = new Item('1', 1, [$source]);
+        $existing3 = new Item('3', 3, [$source]);
+
+        $reconciled1 = new Item('1', 1, [$source]);
+        $reconciled3 = new Item('3', 3, [$source]);
 
         $expected = [
-            $reconciled[0],
-            $items[1],
-            $reconciled[2],
+            $reconciled1,
+            $item2,
+            $reconciled3,
         ];
 
         $query = StoreQuery::forIds(['1', '2', '3']);
-        $store->expects($this->once())->method('query')->with($query)->willReturn($existing);
+        $store->expects($this->once())->method('query')->with($query)->willReturn([$existing1, $existing3]);
 
         $strategy->expects($this->once())->method('beforeBatch')->willReturnArgument(0);
         $strategy->expects($this->once())->method('afterBatch')->willReturnArgument(0);
 
         $strategy->expects($this->exactly(3))
                  ->method('convert')
-                 ->withConsecutive([$items[0]], [$items[1]], [$items[2]])
+                 ->withConsecutive([$item1], [$item2], [$item3])
                  ->willReturnArgument(0);
         $strategy->expects($this->exactly(2))
                  ->method('reconcile')
                  ->withConsecutive(
-                     [$items[0], $existing['1']],
-                     [$items[2], $existing[3]]
+                     [$item1, $existing1],
+                     [$item3, $existing3]
                  )
                  ->willReturnOnConsecutiveCalls(
-                     $reconciled[0],
-                     $reconciled[2]
+                     $reconciled1,
+                     $reconciled3
                  );
 
         $strategy->expects($this->exactly(3))
                  ->method('finalize')
                  ->withConsecutive(
-                     [$reconciled[0]],
-                     [$items[1]],
-                     [$reconciled[2]]
+                     [$reconciled1],
+                     [$item2],
+                     [$reconciled3]
                  )
                  ->willReturnArgument(0);
 
         $converter = new Converter($store, $strategy);
-        $actualItems = $converter->convertMultiple($items);
+        $actualItems = $converter->convertMultiple([$item1, $item2, $item3]);
 
         self::assertEquals($expected, $actualItems);
     }

@@ -13,8 +13,7 @@ interface ConversionStrategy
      * Converts a batch of items after each item in the batch has been individually converted.
      *
      * @param Item[] $incoming The incoming items to be converted.
-     * @param array<string, Item> $existing A list of corresponding existing items from the store.
-     *
+     * @param array<string, Item> $existing The corresponding existing items from the store, mapped by their IDs.
      * @return Item[] The list of items to convert.
      */
     public function beforeBatch(array $incoming, array $existing): array;
