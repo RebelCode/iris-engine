@@ -28,4 +28,22 @@ class ExpressionTest extends TestCase
         self::assertEquals($operator, $expression->operator);
         self::assertEquals($value, $expression->value);
     }
+
+    public function testCreateForProp()
+    {
+        $expr = Expression::forProp('id', Expression::EQUAL_TO, 'foo');
+
+        self::assertEquals(Field::prop('id'), $expr->field);
+        self::assertEquals(Expression::EQUAL_TO, $expr->operator);
+        self::assertEquals('foo', $expr->value);
+    }
+
+    public function testCreateForData()
+    {
+        $expr = Expression::forData('foo', Expression::EQUAL_TO, 'bar');
+
+        self::assertEquals(Field::data('foo'), $expr->field);
+        self::assertEquals(Expression::EQUAL_TO, $expr->operator);
+        self::assertEquals('bar', $expr->value);
+    }
 }

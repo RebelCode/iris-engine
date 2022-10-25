@@ -52,4 +52,36 @@ class Expression extends BaseCriterion
         $this->value = $value;
         $this->operator = $operator;
     }
+
+    /**
+     * Static constructor that creates an expression for an item prop.
+     *
+     * @param string $name The name of the prop.
+     * @param string $operator The criterion operator. See the class constants in {@link Expression}.
+     * @param mixed|null $value Optional value to use in the criterion. Can be null for {@link Expression::EXISTS} and
+     *                          {@link Expression::NOT_EXISTS} criterion.
+     * @return self The created expression.
+     *
+     * @psalm-param Expression::* $operator
+     */
+    public static function forProp(string $name, string $operator, $value = null): self
+    {
+        return new self(Field::prop($name), $operator, $value);
+    }
+
+    /**
+     * Static constructor that creates an expression for a data entry.
+     *
+     * @param string $key The key of the data entry.
+     * @param string $operator The criterion operator. See the class constants in {@link Expression}.
+     * @param mixed|null $value Optional value to use in the criterion. Can be null for {@link Expression::EXISTS} and
+     *                          {@link Expression::NOT_EXISTS} criterion.
+     * @return self The created expression.
+     *
+     * @psalm-param Expression::* $operator
+     */
+    public static function forData(string $key, string $operator, $value = null): self
+    {
+        return new self(Field::data($key), $operator, $value);
+    }
 }
