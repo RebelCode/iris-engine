@@ -9,7 +9,7 @@ use RebelCode\Iris\Converter;
 use RebelCode\Iris\Data\Item;
 use RebelCode\Iris\Data\Source;
 use RebelCode\Iris\Store;
-use RebelCode\Iris\Store\StoreQuery;
+use RebelCode\Iris\StoreQuery;
 
 class ConverterTest extends TestCase
 {

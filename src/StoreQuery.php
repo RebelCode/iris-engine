@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace RebelCode\Iris\Store;
+namespace RebelCode\Iris;
 
 use RebelCode\Iris\Data\Source;
 use RebelCode\Iris\Store\Query\Criterion;

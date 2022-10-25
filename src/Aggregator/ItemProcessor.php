@@ -6,7 +6,7 @@ namespace RebelCode\Iris\Aggregator;
 
 use RebelCode\Iris\Data\Feed;
 use RebelCode\Iris\Data\Item;
-use RebelCode\Iris\Store\StoreQuery;
+use RebelCode\Iris\StoreQuery;
 
 interface ItemProcessor
 {

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace RebelCode\Iris\Test\Func\Store;
+namespace RebelCode\Iris\Test\Func;
 
 use PHPUnit\Framework\TestCase;
 use RebelCode\Iris\Data\Source;
@@ -10,7 +10,7 @@ use RebelCode\Iris\Store\Query\Criterion;
 use RebelCode\Iris\Store\Query\Expression;
 use RebelCode\Iris\Store\Query\Field;
 use RebelCode\Iris\Store\Query\Order;
-use RebelCode\Iris\Store\StoreQuery;
+use RebelCode\Iris\StoreQuery;
 
 class StoreQueryTest extends TestCase
 {

@@ -6,7 +6,6 @@ namespace RebelCode\Iris;
 
 use RebelCode\Iris\Data\Item;
 use RebelCode\Iris\Exception\StoreException;
-use RebelCode\Iris\Store\StoreQuery;
 
 interface Store
 {
@@ -28,7 +27,7 @@ interface Store
     /**
      * Retrieves items based on a given query.
      *
-     * @param Store\StoreQuery $query The query.
+     * @param StoreQuery $query The query.
      *
      * @return Item[] A list of items that satisfy and conform to the given query.
      *
@@ -39,7 +38,7 @@ interface Store
     /**
      * Deletes items that match a given query.
      *
-     * @param Store\StoreQuery $query The query.
+     * @param StoreQuery $query The query.
      * @retrun int The number of items that were deleted.
      */
     public function delete(StoreQuery $query): int;

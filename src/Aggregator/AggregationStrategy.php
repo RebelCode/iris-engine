@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace RebelCode\Iris\Aggregator;
 
 use RebelCode\Iris\Data\Feed;
-use RebelCode\Iris\Store\StoreQuery;
+use RebelCode\Iris\StoreQuery;
 
 interface AggregationStrategy
 {
