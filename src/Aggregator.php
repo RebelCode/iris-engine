@@ -6,6 +6,7 @@ namespace RebelCode\Iris;
 
 use RebelCode\Iris\Aggregator\AggregateResult;
 use RebelCode\Iris\Aggregator\AggregationStrategy;
+use RebelCode\Iris\Aggregator\NoopItemProcessor;
 use RebelCode\Iris\Data\Feed;
 use RebelCode\Iris\Exception\StoreException;
 
@@ -37,37 +38,24 @@ class Aggregator
             return new AggregateResult([], 0, 0, 0);
         }
 
-        $manualPagination = $this->strategy->doManualPagination($feed, $query);
-
-        $storeQuery = $manualPagination ? $query->withoutPagination() : $query;
+        if ($this->strategy->doManualPagination($feed, $query)) {
+            $storeQuery = $query->withoutPagination();
+            $resultOffset = $query->offset;
+        } else {
+            $storeQuery = $query;
+            $resultOffset = 0;
+        }
 
         $items = $this->store->query($storeQuery)->getUnique();
-        $storeTotal = $preTotal = $postTotal = count($items);
 
-        $preProcessor = $this->strategy->getPreProcessor($feed, $query);
-        $postProcessor = $this->strategy->getPostProcessor($feed, $query);
+        $preProcessor = $this->strategy->getPreProcessor($feed, $query) ?? new NoopItemProcessor();
+        $preItems = $preProcessor->process($items, $feed, $query);
 
-        if ($preProcessor !== null) {
-            $items = $preProcessor->process($items, $feed, $query);
-            $preTotal = $postTotal = count($items);
-        }
+        $postProcessor = $this->strategy->getPostProcessor($feed, $query) ?? new NoopItemProcessor();
+        $postItems = $postProcessor->process($preItems, $feed, $query);
 
-        if ($postProcessor !== null) {
-            $items = $postProcessor->process($items, $feed, $query);
-            $postTotal = count($items);
-        }
+        $finalItems = array_slice($postItems, $resultOffset, $query->count);
 
-        if ($manualPagination) {
-            /** @psalm-suppress RedundantConditionGivenDocblockType, DocblockTypeContradiction */
-            $items = array_slice($items, $query->offset ?? 0, $query->count);
-        } else {
-            // Make sure that the list of items is not greater than the query's count after post-processing
-            $count = max(0, $query->count ?? 0);
-            if ($count > 0) {
-                $items = array_slice($items, 0, $count);
-            }
-        }
-
-        return new AggregateResult($items, $storeTotal, $preTotal, $postTotal);
+        return new AggregateResult($finalItems, count($items), count($preItems), count($postItems));
     }
 }
