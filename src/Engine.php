@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace RebelCode\Iris;
 
+use RebelCode\Iris\Aggregator\AggregateResult;
+use RebelCode\Iris\Aggregator\AggregationStrategy;
+use RebelCode\Iris\Aggregator\NoopItemProcessor;
+use RebelCode\Iris\Data\Feed;
 use RebelCode\Iris\Exception\ConversionException;
 use RebelCode\Iris\Exception\FetchException;
 use RebelCode\Iris\Exception\InvalidSourceException;
@@ -17,8 +21,8 @@ class Engine
     /** @var Converter */
     protected $converter;
 
-    /** @var Aggregator */
-    protected $aggregator;
+    /** @var AggregationStrategy */
+    protected $aggStrategy;
 
     /** @var Store */
     protected $store;
@@ -28,29 +32,24 @@ class Engine
      *
      * @param FetchStrategy $fetchStrategy The strategy to use for fetching, mainly responsible for providing a catalog.
      * @param Converter $converter The converter, used to convert fetched items into the desired data format and layout.
-     * @param Aggregator $aggregator The aggregator, used to query and aggregate imported items.
+     * @param AggregationStrategy $aggregationStrategy The strategy to use for aggregating items into feeds.
      * @param Store $store The store, used to save fetched items to persistent storage.
      */
     public function __construct(
         FetchStrategy $fetchStrategy,
         Converter $converter,
-        Aggregator $aggregator,
+        AggregationStrategy $aggregationStrategy,
         Store $store
     ) {
         $this->fetchStrategy = $fetchStrategy;
         $this->converter = $converter;
-        $this->aggregator = $aggregator;
+        $this->aggStrategy = $aggregationStrategy;
         $this->store = $store;
     }
 
     public function getConverter(): Converter
     {
         return $this->converter;
-    }
-
-    public function getAggregator(): Aggregator
-    {
-        return $this->aggregator;
     }
 
     public function getStore(): Store
@@ -111,5 +110,35 @@ class Engine
             $result->prevCursor,
             $result->errors
         );
+    }
+
+    /** Aggregates items from the store for a feed. */
+    public function aggregate(Feed $feed, ?int $count = null, int $offset = 0): AggregateResult
+    {
+        $query = $this->aggStrategy->getFeedQuery($feed, $count, $offset);
+
+        if ($query === null) {
+            return new AggregateResult([], 0, 0, 0);
+        }
+
+        if ($this->aggStrategy->doManualPagination($feed, $query)) {
+            $storeQuery = $query->withoutPagination();
+            $resultOffset = $query->offset;
+        } else {
+            $storeQuery = $query;
+            $resultOffset = 0;
+        }
+
+        $items = $this->store->query($storeQuery)->getUnique();
+
+        $preProcessor = $this->aggStrategy->getPreProcessor($feed, $query) ?? new NoopItemProcessor();
+        $postProcessor = $this->aggStrategy->getPostProcessor($feed, $query) ?? new NoopItemProcessor();
+
+        $preItems = $preProcessor->process($items, $feed, $query);
+        $postItems = $postProcessor->process($preItems, $feed, $query);
+
+        $finalItems = array_slice($postItems, $resultOffset, $query->count);
+
+        return new AggregateResult($finalItems, count($items), count($preItems), count($postItems));
     }
 }
