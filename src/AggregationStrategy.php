@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace RebelCode\Iris;
 
-use RebelCode\Iris\Aggregator\ItemProcessor;
 use RebelCode\Iris\Data\Feed;
 
 interface AggregationStrategy

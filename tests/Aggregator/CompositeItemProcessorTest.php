@@ -4,9 +4,9 @@ namespace RebelCode\Iris\Test\Func\Aggregator;
 
 use PHPUnit\Framework\TestCase;
 use RebelCode\Iris\Aggregator\CompositeItemProcessor;
-use RebelCode\Iris\Aggregator\ItemProcessor;
 use RebelCode\Iris\Data\Feed;
 use RebelCode\Iris\Data\Item;
+use RebelCode\Iris\ItemProcessor;
 use RebelCode\Iris\StoreQuery;
 
 class CompositeItemProcessorTest extends TestCase

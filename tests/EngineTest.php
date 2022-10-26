@@ -6,7 +6,6 @@ namespace RebelCode\Iris\Test\Func;
 
 use PHPUnit\Framework\TestCase;
 use RebelCode\Iris\AggregationStrategy;
-use RebelCode\Iris\Aggregator\ItemProcessor;
 use RebelCode\Iris\Catalog;
 use RebelCode\Iris\Converter;
 use RebelCode\Iris\Data\Feed;
@@ -16,6 +15,7 @@ use RebelCode\Iris\Engine;
 use RebelCode\Iris\FetchQuery;
 use RebelCode\Iris\FetchResult;
 use RebelCode\Iris\FetchStrategy;
+use RebelCode\Iris\ItemProcessor;
 use RebelCode\Iris\Store;
 use RebelCode\Iris\StoreQuery;
 use RebelCode\Iris\StoreResult;

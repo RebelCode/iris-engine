@@ -3,6 +3,7 @@
 namespace RebelCode\Iris\Aggregator;
 
 use RebelCode\Iris\Data\Feed;
+use RebelCode\Iris\ItemProcessor;
 use RebelCode\Iris\StoreQuery;
 
 /** An item processor implementation that composes multiple processors. */
