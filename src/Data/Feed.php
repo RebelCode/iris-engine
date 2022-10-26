@@ -20,7 +20,7 @@ class Feed extends ImmutableDataObject
      * @param Source[] $sources The sources whose items are shown in the feed.
      * @param array<string, mixed> $data The data map.
      */
-    public function __construct($id, array $sources, array $data)
+    public function __construct($id, array $sources, array $data = [])
     {
         parent::__construct($data);
         $this->id = $id;

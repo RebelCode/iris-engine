@@ -13,7 +13,7 @@ class FeedTest extends TestCase
 {
     public function testIsImmutableDataObject()
     {
-        $feed = new Feed(0, [], []);
+        $feed = new Feed(0, []);
 
         self::assertInstanceOf(ImmutableDataObject::class, $feed);
     }
@@ -30,10 +30,22 @@ class FeedTest extends TestCase
             'baz' => 'qux',
         ];
 
-        $item = new Feed($id, $sources, $data);
+        $feed = new Feed($id, $sources, $data);
 
-        self::assertEquals($id, $item->id);
-        self::assertSame($sources, $item->sources);
-        self::assertEquals($data, $item->data);
+        self::assertEquals($id, $feed->id);
+        self::assertSame($sources, $feed->sources);
+        self::assertEquals($data, $feed->data);
+    }
+
+    public function testConstructorDefaults()
+    {
+        $id = '123';
+        $sources = [];
+
+        $feed = new Feed($id, $sources);
+
+        self::assertEquals($id, $feed->id);
+        self::assertSame($sources, $feed->sources);
+        self::assertEquals([], $feed->data);
     }
 }
