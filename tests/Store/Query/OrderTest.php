@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace RebelCode\Iris\Test\Func\Store\Query;
 
 use PHPUnit\Framework\TestCase;
+use RebelCode\Iris\StoreQuery\Field;
 use RebelCode\Iris\StoreQuery\Order;
 
 class OrderTest extends TestCase
@@ -12,7 +13,7 @@ class OrderTest extends TestCase
     public function testConstructor()
     {
         $type = Order::ASC;
-        $field = 'foo';
+        $field = $this->createMock(Field::class);
 
         $order = new Order($type, $field);
 
@@ -22,7 +23,7 @@ class OrderTest extends TestCase
 
     public function testStaticAscConstructor()
     {
-        $field = 'foo';
+        $field = $this->createMock(Field::class);
         $order = Order::asc($field);
 
         self::assertEquals(Order::ASC, $order->type);
@@ -31,7 +32,7 @@ class OrderTest extends TestCase
 
     public function testStaticDescConstructor()
     {
-        $field = 'foo';
+        $field = $this->createMock(Field::class);
         $order = Order::desc($field);
 
         self::assertEquals(Order::DESC, $order->type);
