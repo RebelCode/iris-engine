@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace RebelCode\Iris\StoreQuery;
 
 use RebelCode\Iris\Data\Item;

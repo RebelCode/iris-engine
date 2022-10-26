@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace RebelCode\Iris\ItemProcessor;
 
 use RebelCode\Iris\Data\Feed;
