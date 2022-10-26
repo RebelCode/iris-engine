@@ -34,10 +34,29 @@ class CompositeItemProcessorTest extends TestCase
             new Item('4', 4, []),
         ];
 
-        $p1->expects($this->once())->method('process')->with($items, $feed, $query);
-        $p2->expects($this->once())->method('process')->with($items, $feed, $query);
-        $p3->expects($this->once())->method('process')->with($items, $feed, $query);
+        $itemsAfterP1 = [
+            new Item('1', 1, []),
+            new Item('2', 2, []),
+            new Item('3', 3, []),
+        ];
 
-        $processor->process($items, $feed, $query);
+        $itemsAfterP2 = [
+            new Item('1', 1, []),
+            new Item('3', 3, []),
+        ];
+
+        $itemsAfterP3 = [
+            new Item('1', 1, []),
+            new Item('3', 3, []),
+            new Item('9', 9, []),
+        ];
+
+        $p1->expects($this->once())->method('process')->with($items, $feed, $query)->willReturn($itemsAfterP1);
+        $p2->expects($this->once())->method('process')->with($itemsAfterP1, $feed, $query)->willReturn($itemsAfterP2);
+        $p3->expects($this->once())->method('process')->with($itemsAfterP2, $feed, $query)->willReturn($itemsAfterP3);
+
+        $result = $processor->process($items, $feed, $query);
+
+        $this->assertEquals($itemsAfterP3, $result);
     }
 }

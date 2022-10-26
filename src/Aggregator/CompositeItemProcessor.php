@@ -22,10 +22,12 @@ class CompositeItemProcessor implements ItemProcessor
     }
 
     /** @inheritDoc */
-    public function process(array &$items, Feed $feed, StoreQuery $query): void
+    public function process(array $items, Feed $feed, StoreQuery $query): array
     {
         foreach ($this->processors as $processor) {
-            $processor->process($items, $feed, $query);
+            $items = $processor->process($items, $feed, $query);
         }
+
+        return $items;
     }
 }

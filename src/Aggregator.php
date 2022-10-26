@@ -42,22 +42,20 @@ class Aggregator
         $storeQuery = $manualPagination ? $query->withoutPagination() : $query;
 
         $items = $this->store->query($storeQuery)->getUnique();
-        $storeTotal = count($items);
+        $storeTotal = $preTotal = $postTotal = count($items);
 
         $preProcessor = $this->strategy->getPreProcessor($feed, $query);
         $postProcessor = $this->strategy->getPostProcessor($feed, $query);
 
         if ($preProcessor !== null) {
-            $preProcessor->process($items, $feed, $query);
+            $items = $preProcessor->process($items, $feed, $query);
+            $preTotal = $postTotal = count($items);
         }
-
-        $preTotal = count($items);
 
         if ($postProcessor !== null) {
-            $postProcessor->process($items, $feed, $query);
+            $items = $postProcessor->process($items, $feed, $query);
+            $postTotal = count($items);
         }
-
-        $postTotal = count($items);
 
         if ($manualPagination) {
             /** @psalm-suppress RedundantConditionGivenDocblockType, DocblockTypeContradiction */
