@@ -6,7 +6,7 @@ namespace RebelCode\Iris;
 
 use RebelCode\Iris\Data\Feed;
 
-interface AggregationStrategy
+interface Aggregator
 {
     /**
      * Retrieves the query that the aggregator will use to obtain the items from the store.
@@ -50,7 +50,7 @@ interface AggregationStrategy
      * Whether the aggregator should apply pagination manually after post-processing.
      *
      * This is useful if the consumer is unable to perform all the necessary filtering using the store query which
-     * is return from {@link AggregationStrategy::getFeedQuery()}. In those situations, the consumer may need to
+     * is return from {@link Aggregator::getFeedQuery()}. In those situations, the consumer may need to
      * perform programmatic filtering on the list of items using pre-processors or post-processors. Such consumers
      * can return true from this method to tell the aggregator to fetch all the items from the store, then apply
      * pagination manually using the query's count and offset.

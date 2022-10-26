@@ -8,7 +8,7 @@ use RebelCode\Iris\Data\Source;
 use RebelCode\Iris\Exception\FetchException;
 use RebelCode\Iris\Exception\InvalidSourceException;
 
-interface Catalog
+interface Fetcher
 {
     /**
      * @psalm-mutation-free

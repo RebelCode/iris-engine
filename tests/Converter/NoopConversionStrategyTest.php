@@ -1,22 +1,22 @@
 <?php
 
-namespace RebelCode\Iris\Test\Func\Conversion;
+namespace RebelCode\Iris\Test\Func\Converter;
 
 use PHPUnit\Framework\TestCase;
-use RebelCode\Iris\ConversionStrategy;
-use RebelCode\Iris\Conversion\NoopConversionStrategy;
+use RebelCode\Iris\Converter;
+use RebelCode\Iris\Converter\NoopConverter;
 use RebelCode\Iris\Data\Item;
 
 class NoopConversionStrategyTest extends TestCase
 {
     public function testImplementsConversionStrategy()
     {
-        $this->assertInstanceOf(ConversionStrategy::class, new NoopConversionStrategy());
+        $this->assertInstanceOf(Converter::class, new NoopConverter());
     }
 
     public function testBeforeBatch()
     {
-        $strategy = new NoopConversionStrategy();
+        $strategy = new NoopConverter();
 
         $incoming = [
             $this->createMock(Item::class),
@@ -37,7 +37,7 @@ class NoopConversionStrategyTest extends TestCase
 
     public function testAfterBatch()
     {
-        $strategy = new NoopConversionStrategy();
+        $strategy = new NoopConverter();
 
         $incoming = [
             $this->createMock(Item::class),
@@ -52,7 +52,7 @@ class NoopConversionStrategyTest extends TestCase
 
     public function testConvert()
     {
-        $strategy = new NoopConversionStrategy();
+        $strategy = new NoopConverter();
 
         $item = $this->createMock(Item::class);
         $result = $strategy->convert($item);
@@ -62,7 +62,7 @@ class NoopConversionStrategyTest extends TestCase
 
     public function finalize()
     {
-        $strategy = new NoopConversionStrategy();
+        $strategy = new NoopConverter();
 
         $item = $this->createMock(Item::class);
         $result = $strategy->finalize($item);
@@ -84,7 +84,7 @@ class NoopConversionStrategyTest extends TestCase
     /** @dataProvider provideDataForReconcileTest */
     public function testReconcile(Item $incoming, Item $existing, bool $updateItems, Item $expected)
     {
-        $strategy = new NoopConversionStrategy($updateItems);
+        $strategy = new NoopConverter($updateItems);
         $result = $strategy->reconcile($incoming, $existing);
 
         $this->assertSame($expected, $result);

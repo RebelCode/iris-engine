@@ -1,12 +1,12 @@
 <?php
 
-namespace RebelCode\Iris\Conversion;
+namespace RebelCode\Iris\Converter;
 
-use RebelCode\Iris\ConversionStrategy;
+use RebelCode\Iris\Converter;
 use RebelCode\Iris\Data\Item;
 
 /** A conversion strategy that performs no conversion. */
-class NoopConversionStrategy implements ConversionStrategy
+class NoopConverter implements Converter
 {
     /** @var bool */
     protected $updateItems;

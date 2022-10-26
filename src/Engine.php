@@ -15,14 +15,14 @@ use RebelCode\Iris\ItemProcessor\NoopItemProcessor;
 
 class Engine
 {
-    /** @var FetchStrategy */
-    protected $fetchStrategy;
+    /** @var Fetcher */
+    protected $fetcher;
 
-    /** @var ConversionStrategy */
-    protected $convStrategy;
+    /** @var Converter */
+    protected $converter;
 
-    /** @var AggregationStrategy */
-    protected $aggStrategy;
+    /** @var Aggregator */
+    protected $aggregator;
 
     /** @var Store */
     protected $store;
@@ -30,20 +30,20 @@ class Engine
     /**
      * Constructor.
      *
-     * @param FetchStrategy $fetchStrategy The strategy to use for fetching, mainly responsible for providing a catalog.
-     * @param ConversionStrategy $conversionStrategy The strategy to use for converting fetched items into local items.
-     * @param AggregationStrategy $aggregationStrategy The strategy to use for aggregating items into feeds.
+     * @param Fetcher $fetcher The fetcher, for obtaining items for a source.
+     * @param Converter $converter The converter, for converting fetched items into items to store.
+     * @param Aggregator $aggregator The aggregator, for fetching items from the store for a feed.
      * @param Store $store The store, used to save fetched items to persistent storage.
      */
     public function __construct(
-        FetchStrategy $fetchStrategy,
-        ConversionStrategy $conversionStrategy,
-        AggregationStrategy $aggregationStrategy,
+        Fetcher $fetcher,
+        Converter $converter,
+        Aggregator $aggregator,
         Store $store
     ) {
-        $this->fetchStrategy = $fetchStrategy;
-        $this->convStrategy = $conversionStrategy;
-        $this->aggStrategy = $aggregationStrategy;
+        $this->fetcher = $fetcher;
+        $this->converter = $converter;
+        $this->aggregator = $aggregator;
         $this->store = $store;
     }
 
@@ -65,13 +65,7 @@ class Engine
      */
     public function fetch(FetchQuery $query): FetchResult
     {
-        $catalog = $this->fetchStrategy->getCatalog($query->source);
-
-        if ($catalog === null) {
-            throw new InvalidSourceException("No catalog found for source \"{$query->source}\"", $query->source);
-        }
-
-        $result = $catalog->query($query->source, $query->cursor, $query->count);
+        $result = $this->fetcher->query($query->source, $query->cursor, $query->count);
         $convItems = $this->convert($result->items);
 
         return new FetchResult(
@@ -100,21 +94,21 @@ class Engine
 
         $existingMap = $this->store->query(StoreQuery::forIds($itemIds))->getMap();
 
-        $items = $this->convStrategy->beforeBatch($items, $existingMap);
+        $items = $this->converter->beforeBatch($items, $existingMap);
 
         $convertedItems = [];
         foreach ($items as $item) {
             $existing = $existingMap[$item->id] ?? null;
 
             try {
-                $item = $this->convStrategy->convert($item);
+                $item = $this->converter->convert($item);
 
                 if ($item !== null && $existing !== null) {
-                    $item = $this->convStrategy->reconcile($item, $existing);
+                    $item = $this->converter->reconcile($item, $existing);
                 }
 
                 if ($item !== null) {
-                    $item = $this->convStrategy->finalize($item);
+                    $item = $this->converter->finalize($item);
                 }
             } catch (ConversionShortCircuit $e) {
                 $item = $e->getItem();
@@ -126,7 +120,7 @@ class Engine
             }
         }
 
-        return $this->convStrategy->afterBatch($convertedItems);
+        return $this->converter->afterBatch($convertedItems);
     }
 
     /**
@@ -163,13 +157,13 @@ class Engine
      */
     public function aggregate(Feed $feed, ?int $count = null, int $offset = 0): AggregateResult
     {
-        $query = $this->aggStrategy->getFeedQuery($feed, $count, $offset);
+        $query = $this->aggregator->getFeedQuery($feed, $count, $offset);
 
         if ($query === null) {
             return new AggregateResult([], 0, 0, 0);
         }
 
-        if ($this->aggStrategy->doManualPagination($feed, $query)) {
+        if ($this->aggregator->doManualPagination($feed, $query)) {
             $storeQuery = $query->withoutPagination();
             $resultOffset = $query->offset;
         } else {
@@ -179,8 +173,8 @@ class Engine
 
         $items = $this->store->query($storeQuery)->getUnique();
 
-        $preProcessor = $this->aggStrategy->getPreProcessor($feed, $query) ?? new NoopItemProcessor();
-        $postProcessor = $this->aggStrategy->getPostProcessor($feed, $query) ?? new NoopItemProcessor();
+        $preProcessor = $this->aggregator->getPreProcessor($feed, $query) ?? new NoopItemProcessor();
+        $postProcessor = $this->aggregator->getPostProcessor($feed, $query) ?? new NoopItemProcessor();
 
         $preItems = $preProcessor->process($items, $feed, $query);
         $postItems = $postProcessor->process($preItems, $feed, $query);

@@ -8,7 +8,7 @@ use RebelCode\Iris\Data\Item;
 use RebelCode\Iris\Exception\ConversionException;
 use RebelCode\Iris\Exception\ConversionShortCircuit;
 
-interface ConversionStrategy
+interface Converter
 {
     /**
      * Converts a batch of items after each item in the batch has been individually converted.

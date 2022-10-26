@@ -5,17 +5,16 @@ declare(strict_types=1);
 namespace RebelCode\Iris\Test\Func;
 
 use PHPUnit\Framework\TestCase;
-use RebelCode\Iris\AggregationStrategy;
-use RebelCode\Iris\Catalog;
-use RebelCode\Iris\ConversionStrategy;
+use RebelCode\Iris\Aggregator;
+use RebelCode\Iris\Converter;
 use RebelCode\Iris\Data\Feed;
 use RebelCode\Iris\Data\Item;
 use RebelCode\Iris\Data\Source;
 use RebelCode\Iris\Engine;
 use RebelCode\Iris\Exception\ConversionShortCircuit;
+use RebelCode\Iris\Fetcher;
 use RebelCode\Iris\FetchQuery;
 use RebelCode\Iris\FetchResult;
-use RebelCode\Iris\FetchStrategy;
 use RebelCode\Iris\ItemProcessor;
 use RebelCode\Iris\Store;
 use RebelCode\Iris\StoreQuery;
@@ -24,39 +23,38 @@ use RebelCode\Iris\StoreResult;
 class EngineTest extends TestCase
 {
     protected function createEngine(
-        ?FetchStrategy $fetchStrategy = null,
-        ?ConversionStrategy $conversionStrategy = null,
-        ?AggregationStrategy $aggregationStrategy = null,
+        ?Fetcher $fetcher = null,
+        ?Converter $converter = null,
+        ?Aggregator $aggregator = null,
         ?Store $store = null
     ): Engine {
-        $fetchStrategy = $fetchStrategy ?? $this->createMock(FetchStrategy::class);
-        $conversionStrategy = $conversionStrategy ?? $this->createMock(ConversionStrategy::class);
-        $aggregationStrategy = $aggregationStrategy ?? $this->createMock(AggregationStrategy::class);
+        $fetcher = $fetcher ?? $this->createMock(Fetcher::class);
+        $converter = $converter ?? $this->createMock(Converter::class);
+        $aggregator = $aggregator ?? $this->createMock(Aggregator::class);
         $store = $store ?? $this->createMock(Store::class);
 
-        return new Engine($fetchStrategy, $conversionStrategy, $aggregationStrategy, $store);
+        return new Engine($fetcher, $converter, $aggregator, $store);
     }
 
     public function testConstructorAndGetters()
     {
-        $fetchStrategy = $this->createMock(FetchStrategy::class);
-        $convStrategy = $this->createMock(ConversionStrategy::class);
-        $aggStrategy = $this->createMock(AggregationStrategy::class);
+        $fetcher = $this->createMock(Fetcher::class);
+        $converter = $this->createMock(Converter::class);
+        $aggregator = $this->createMock(Aggregator::class);
         $store = $this->createMock(Store::class);
 
-        $engine = $this->createEngine($fetchStrategy, $convStrategy, $aggStrategy, $store);
+        $engine = $this->createEngine($fetcher, $converter, $aggregator, $store);
 
         self::assertSame($store, $engine->getStore());
     }
 
     public function testFetch()
     {
-        $fetchStrategy = $this->createMock(FetchStrategy::class);
-        $catalog = $this->createMock(Catalog::class);
-        $convStrategy = $this->createMock(ConversionStrategy::class);
-        $aggStrategy = $this->createMock(AggregationStrategy::class);
+        $fetcher = $this->createMock(Fetcher::class);
+        $converter = $this->createMock(Converter::class);
+        $aggregator = $this->createMock(Aggregator::class);
         $store = $this->createMock(Store::class);
-        $engine = $this->createEngine($fetchStrategy, $convStrategy, $aggStrategy, $store);
+        $engine = $this->createEngine($fetcher, $converter, $aggregator, $store);
 
         $source = $this->createMock(Source::class);
         $cursor = 'ABC123';
@@ -81,20 +79,19 @@ class EngineTest extends TestCase
         $errors = ['Error!'];
         $fetchResult = new FetchResult($fetchItems, $source, $cSize, $nCursor, $pCursor, $errors);
 
-        $catalog->expects($this->once())
+        $fetcher->expects($this->once())
                 ->method('query')
                 ->with($query->source, $query->cursor, $query->count)
                 ->willReturn($fetchResult);
-        $fetchStrategy->expects($this->once())->method('getCatalog')->with($query->source)->willReturn($catalog);
 
-        $convStrategy->method('beforeBatch')->willReturnArgument(0);
-        $convStrategy->method('afterBatch')->willReturnArgument(0);
-        $convStrategy->method('finalize')->willReturnArgument(0);
+        $converter->method('beforeBatch')->willReturnArgument(0);
+        $converter->method('afterBatch')->willReturnArgument(0);
+        $converter->method('finalize')->willReturnArgument(0);
 
-        $convStrategy->expects($this->exactly(count($fetchItems)))
-                     ->method('convert')
-                     ->withConsecutive([$fetchItems[0]], [$fetchItems[1]], [$fetchItems[2]])
-                     ->willReturn($convItems[0], $convItems[1], $convItems[2]);
+        $converter->expects($this->exactly(count($fetchItems)))
+                  ->method('convert')
+                  ->withConsecutive([$fetchItems[0]], [$fetchItems[1]], [$fetchItems[2]])
+                  ->willReturn($convItems[0], $convItems[1], $convItems[2]);
 
         $result = $engine->fetch($query);
 
@@ -108,7 +105,7 @@ class EngineTest extends TestCase
     public function testConvertMultiple()
     {
         $store = $this->createMock(Store::class);
-        $strategy = $this->createMock(ConversionStrategy::class);
+        $strategy = $this->createMock(Converter::class);
 
         $source = $this->createMock(Source::class);
         $items = [
@@ -135,7 +132,7 @@ class EngineTest extends TestCase
     public function testConvertMultipleBeforeBatch()
     {
         $store = $this->createMock(Store::class);
-        $strategy = $this->createMock(ConversionStrategy::class);
+        $strategy = $this->createMock(Converter::class);
 
         $source = $this->createMock(Source::class);
         $items = [
@@ -167,7 +164,7 @@ class EngineTest extends TestCase
     public function testConvertMultipleAfterBatch()
     {
         $store = $this->createMock(Store::class);
-        $strategy = $this->createMock(ConversionStrategy::class);
+        $strategy = $this->createMock(Converter::class);
 
         $source = $this->createMock(Source::class);
         $items = [
@@ -199,7 +196,7 @@ class EngineTest extends TestCase
     public function testConvertMultipleFilteredItems()
     {
         $store = $this->createMock(Store::class);
-        $strategy = $this->createMock(ConversionStrategy::class);
+        $strategy = $this->createMock(Converter::class);
 
         $source = $this->createMock(Source::class);
         $items = [
@@ -234,7 +231,7 @@ class EngineTest extends TestCase
     public function testConvertMultipleWithReconciliation()
     {
         $store = $this->createMock(Store::class);
-        $strategy = $this->createMock(ConversionStrategy::class);
+        $strategy = $this->createMock(Converter::class);
 
         $source = $this->createMock(Source::class);
 
@@ -296,7 +293,7 @@ class EngineTest extends TestCase
     public function testConvertMultipleShortCircuitNoYield()
     {
         $store = $this->createMock(Store::class);
-        $strategy = $this->createMock(ConversionStrategy::class);
+        $strategy = $this->createMock(Converter::class);
 
         $source = $this->createMock(Source::class);
         $items = [
@@ -340,7 +337,7 @@ class EngineTest extends TestCase
     public function testConvertMultipleShortCircuitYield()
     {
         $store = $this->createMock(Store::class);
-        $strategy = $this->createMock(ConversionStrategy::class);
+        $strategy = $this->createMock(Converter::class);
 
         $source = $this->createMock(Source::class);
         $items = [
@@ -384,12 +381,11 @@ class EngineTest extends TestCase
 
     public function testImport()
     {
-        $fetchStrategy = $this->createMock(FetchStrategy::class);
-        $catalog = $this->createMock(Catalog::class);
-        $convStrategy = $this->createMock(ConversionStrategy::class);
-        $aggStrategy = $this->createMock(AggregationStrategy::class);
+        $fetcher = $this->createMock(Fetcher::class);
+        $converter = $this->createMock(Converter::class);
+        $aggregator = $this->createMock(Aggregator::class);
         $store = $this->createMock(Store::class);
-        $engine = $this->createEngine($fetchStrategy, $convStrategy, $aggStrategy, $store);
+        $engine = $this->createEngine($fetcher, $converter, $aggregator, $store);
 
         $source = $this->createMock(Source::class);
         $cursor = 'ABC123';
@@ -414,16 +410,15 @@ class EngineTest extends TestCase
         $errors = ['Error!'];
         $result = new FetchResult($items, $source, $cSize, $nCursor, $pCursor, $errors);
 
-        $catalog->expects($this->once())
+        $fetcher->expects($this->once())
                 ->method('query')
                 ->with($query->source, $query->cursor, $query->count)
                 ->willReturn($result);
-        $fetchStrategy->expects($this->once())->method('getCatalog')->with($query->source)->willReturn($catalog);
 
-        $convStrategy->method('beforeBatch')->willReturnArgument(0);
-        $convStrategy->method('afterBatch')->willReturnArgument(0);
-        $convStrategy->method('finalize')->willReturnArgument(0);
-        $convStrategy->method('convert')->willReturnArgument(0);
+        $converter->method('beforeBatch')->willReturnArgument(0);
+        $converter->method('afterBatch')->willReturnArgument(0);
+        $converter->method('finalize')->willReturnArgument(0);
+        $converter->method('convert')->willReturnArgument(0);
 
         $store->expects($this->once())->method('insert')->with($items)->willReturn(new StoreResult($storedItems));
 
@@ -449,7 +444,7 @@ class EngineTest extends TestCase
         $preProcessor = $this->createMock(ItemProcessor::class);
         $postProcessor = $this->createMock(ItemProcessor::class);
 
-        $strategy = $this->createMock(AggregationStrategy::class);
+        $strategy = $this->createMock(Aggregator::class);
         $strategy->expects($this->once())->method('getFeedQuery')->with($feed, $count, $offset)->willReturn($query);
         $strategy->expects($this->once())->method('getPreProcessor')->with($feed, $query)->willReturn($preProcessor);
         $strategy->expects($this->once())->method('getPostProcessor')->with($feed, $query)->willReturn($postProcessor);
@@ -484,7 +479,7 @@ class EngineTest extends TestCase
         $preProcessor = $this->createMock(ItemProcessor::class);
         $postProcessor = $this->createMock(ItemProcessor::class);
 
-        $strategy = $this->createConfiguredMock(AggregationStrategy::class, [
+        $strategy = $this->createConfiguredMock(Aggregator::class, [
             'getFeedQuery' => null,
             'getPreProcessor' => $preProcessor,
             'getPostProcessor' => $postProcessor,
@@ -517,7 +512,7 @@ class EngineTest extends TestCase
         $preProcessor = $this->createMock(ItemProcessor::class);
         $postProcessor = $this->createMock(ItemProcessor::class);
 
-        $strategy = $this->createConfiguredMock(AggregationStrategy::class, [
+        $strategy = $this->createConfiguredMock(Aggregator::class, [
             'getFeedQuery' => $query,
             'getPreProcessor' => $preProcessor,
             'getPostProcessor' => $postProcessor,
@@ -566,7 +561,7 @@ class EngineTest extends TestCase
         $preProcessor = $this->createMock(ItemProcessor::class);
         $postProcessor = $this->createMock(ItemProcessor::class);
 
-        $strategy = $this->createConfiguredMock(AggregationStrategy::class, [
+        $strategy = $this->createConfiguredMock(Aggregator::class, [
             'getFeedQuery' => $query,
             'getPreProcessor' => $preProcessor,
             'getPostProcessor' => $postProcessor,
@@ -615,7 +610,7 @@ class EngineTest extends TestCase
         $preProcessor = $this->createMock(ItemProcessor::class);
         $postProcessor = $this->createMock(ItemProcessor::class);
 
-        $strategy = $this->createConfiguredMock(AggregationStrategy::class, [
+        $strategy = $this->createConfiguredMock(Aggregator::class, [
             'getFeedQuery' => $query,
             'getPreProcessor' => $preProcessor,
             'getPostProcessor' => $postProcessor,
@@ -664,7 +659,7 @@ class EngineTest extends TestCase
         $preProcessor = $this->createMock(ItemProcessor::class);
         $postProcessor = $this->createMock(ItemProcessor::class);
 
-        $strategy = $this->createConfiguredMock(AggregationStrategy::class, [
+        $strategy = $this->createConfiguredMock(Aggregator::class, [
             'getFeedQuery' => $query,
             'getPreProcessor' => $preProcessor,
             'getPostProcessor' => $postProcessor,
@@ -716,7 +711,7 @@ class EngineTest extends TestCase
 
         $preProcessor = $this->createMock(ItemProcessor::class);
 
-        $strategy = $this->createConfiguredMock(AggregationStrategy::class, [
+        $strategy = $this->createConfiguredMock(Aggregator::class, [
             'getFeedQuery' => $query,
             'getPreProcessor' => $preProcessor,
             'getPostProcessor' => null,
@@ -770,7 +765,7 @@ class EngineTest extends TestCase
         $store = $this->createMock(Store::class);
         $feed = $this->createMock(Feed::class);
 
-        $strategy = $this->createMock(AggregationStrategy::class);
+        $strategy = $this->createMock(Aggregator::class);
         $strategy->expects($this->once())->method('getFeedQuery')->with($feed, $count, $offset)->willReturn($query);
         $strategy->expects($this->once())->method('getPreProcessor')->with($feed, $query)->willReturn(null);
         $strategy->expects($this->once())->method('getPostProcessor')->with($feed, $query)->willReturn(null);
