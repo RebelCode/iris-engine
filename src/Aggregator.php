@@ -7,7 +7,6 @@ namespace RebelCode\Iris;
 use RebelCode\Iris\Aggregator\AggregateResult;
 use RebelCode\Iris\Aggregator\AggregationStrategy;
 use RebelCode\Iris\Data\Feed;
-use RebelCode\Iris\Data\Item;
 use RebelCode\Iris\Exception\StoreException;
 
 class Aggregator
@@ -42,9 +41,7 @@ class Aggregator
 
         $storeQuery = $manualPagination ? $query->withoutPagination() : $query;
 
-        $items = $this->store->query($storeQuery)->getItems();
-        $this->removeDuplicates($items);
-
+        $items = $this->store->query($storeQuery)->getUnique();
         $storeTotal = count($items);
 
         $preProcessors = $this->strategy->getPreProcessors($feed, $query);
@@ -73,21 +70,5 @@ class Aggregator
         }
 
         return new AggregateResult($items, $storeTotal, $preTotal, $postTotal);
-    }
-
-    /**
-     * Removes duplicate items that share the same ID.
-     *
-     * Note: this method takes the item list by reference for performance reasons.
-     *
-     * @param Item[] $items The list of items.
-     */
-    protected function removeDuplicates(array &$items): void
-    {
-        $unique = [];
-        foreach ($items as $item) {
-            $unique[$item->id] = $item;
-        }
-        $items = array_values($unique);
     }
 }

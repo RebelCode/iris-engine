@@ -72,6 +72,16 @@ class StoreResult
     }
 
     /**
+     * Retrieves the items in the result, ensuring that duplicate items are removed.
+     *
+     * @return list<Item>
+     */
+    public function getUnique(): array
+    {
+        return array_values($this->getMap());
+    }
+
+    /**
      * Retrieves the item with a specific ID from the result.
      *
      * @param string $id The ID of the item to retrieve.
