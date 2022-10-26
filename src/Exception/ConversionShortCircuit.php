@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace RebelCode\Iris\Converter;
+namespace RebelCode\Iris\Exception;
 
 use Exception;
 use RebelCode\Iris\Data\Item;

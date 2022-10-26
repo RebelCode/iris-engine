@@ -9,6 +9,7 @@ use RebelCode\Iris\ConversionStrategy;
 use RebelCode\Iris\Converter;
 use RebelCode\Iris\Data\Item;
 use RebelCode\Iris\Data\Source;
+use RebelCode\Iris\Exception\ConversionShortCircuit;
 use RebelCode\Iris\Store;
 use RebelCode\Iris\StoreQuery;
 use RebelCode\Iris\StoreResult;
@@ -340,7 +341,7 @@ class ConverterTest extends TestCase
         $strategy->expects($this->exactly(2))->method('convert')->willReturnCallback(function ($item) use (&$count) {
             $count++;
             if ($count >= 2) {
-                throw new Converter\ConversionShortCircuit();
+                throw new ConversionShortCircuit();
             }
             return $item;
         });
@@ -385,7 +386,7 @@ class ConverterTest extends TestCase
         $strategy->expects($this->exactly(2))->method('convert')->willReturnCallback(function ($item) use (&$count) {
             $count++;
             if ($count >= 2) {
-                throw new Converter\ConversionShortCircuit($item);
+                throw new ConversionShortCircuit($item);
             }
             return $item;
         });

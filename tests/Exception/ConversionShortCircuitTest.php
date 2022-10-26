@@ -1,9 +1,9 @@
 <?php
 
-namespace RebelCode\Iris\Test\Func\Converter;
+namespace RebelCode\Iris\Test\Func\Exception;
 
 use PHPUnit\Framework\TestCase;
-use RebelCode\Iris\Converter\ConversionShortCircuit;
+use RebelCode\Iris\Exception\ConversionShortCircuit;
 use Throwable;
 
 class ConversionShortCircuitTest extends TestCase
