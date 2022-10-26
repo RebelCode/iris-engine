@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace RebelCode\Iris\Aggregator;
+namespace RebelCode\Iris;
 
 use RebelCode\Iris\Data\Item;
 

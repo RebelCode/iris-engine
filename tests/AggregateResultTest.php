@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace RebelCode\Iris\Test\Func\Aggregator;
+namespace RebelCode\Iris\Test\Func;
 
 use PHPUnit\Framework\TestCase;
-use RebelCode\Iris\Aggregator\AggregateResult;
+use RebelCode\Iris\AggregateResult;
 use RebelCode\Iris\Data\Item;
 
 class AggregateResultTest extends TestCase
