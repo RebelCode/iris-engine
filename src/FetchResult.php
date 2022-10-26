@@ -10,7 +10,7 @@ use RebelCode\Iris\Data\Source;
 /** @psalm-immutable */
 class FetchResult
 {
-    /** @var Item[] */
+    /** @var list<Item> */
     public $items;
 
     /** @var Source */
@@ -31,7 +31,7 @@ class FetchResult
     /**
      * Constructor.
      *
-     * @param Item[] $items The fetched items.
+     * @param list<Item> $items The fetched items.
      * @param Source $source The source from which items where fetched.
      * @param int|null $catalogSize The total number of items in the source's catalog.
      * @param string|null $nextCursor The cursor for the next batch of items.

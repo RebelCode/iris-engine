@@ -13,9 +13,9 @@ interface Converter
     /**
      * Converts a batch of items after each item in the batch has been individually converted.
      *
-     * @param Item[] $incoming The incoming items to be converted.
+     * @param list<Item> $incoming The incoming items to be converted.
      * @param array<string, Item> $existing The corresponding existing items from the store, mapped by their IDs.
-     * @return Item[] The list of items to convert.
+     * @return list<Item> The list of items to convert.
      */
     public function beforeBatch(array $incoming, array $existing): array;
 
@@ -23,7 +23,6 @@ interface Converter
      * Converts an item.
      *
      * @param Item $item The item to convert.
-     *
      * @return Item|null The converted item, or null if the item should be rejected.
      *
      * @throws ConversionException If an error occurred.
@@ -36,7 +35,6 @@ interface Converter
      *
      * @param Item $incoming The item to be converted.
      * @param Item $existing The corresponding existing item.
-     *
      * @return Item|null The reconciled item, or null if the item should be rejected.
      *
      * @throws ConversionException If an error occurred.
@@ -48,7 +46,6 @@ interface Converter
      * Finalizes an item after conversion and possible reconciliation.
      *
      * @param Item $item The item to finalize.
-     *
      * @return Item|null The finalized item, or null if the item should be rejected.
      *
      * @throws ConversionException If an error occurred.
@@ -59,9 +56,8 @@ interface Converter
     /**
      * Converts a batch of items after each item in the batch has been individually converted.
      *
-     * @param Item[] $items The converted items.
-     *
-     * @return Item[] The final list of items.
+     * @param list<Item> $items The converted items.
+     * @return list<Item> The final list of items.
      */
     public function afterBatch(array $items): array;
 }
