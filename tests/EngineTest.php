@@ -7,11 +7,12 @@ namespace RebelCode\Iris\Test\Func;
 use PHPUnit\Framework\TestCase;
 use RebelCode\Iris\AggregationStrategy;
 use RebelCode\Iris\Catalog;
-use RebelCode\Iris\Converter;
+use RebelCode\Iris\ConversionStrategy;
 use RebelCode\Iris\Data\Feed;
 use RebelCode\Iris\Data\Item;
 use RebelCode\Iris\Data\Source;
 use RebelCode\Iris\Engine;
+use RebelCode\Iris\Exception\ConversionShortCircuit;
 use RebelCode\Iris\FetchQuery;
 use RebelCode\Iris\FetchResult;
 use RebelCode\Iris\FetchStrategy;
@@ -24,28 +25,27 @@ class EngineTest extends TestCase
 {
     protected function createEngine(
         ?FetchStrategy $fetchStrategy = null,
-        ?Converter $converter = null,
+        ?ConversionStrategy $conversionStrategy = null,
         ?AggregationStrategy $aggregationStrategy = null,
         ?Store $store = null
-    ) {
+    ): Engine {
         $fetchStrategy = $fetchStrategy ?? $this->createMock(FetchStrategy::class);
-        $converter = $converter ?? $this->createMock(Converter::class);
+        $conversionStrategy = $conversionStrategy ?? $this->createMock(ConversionStrategy::class);
         $aggregationStrategy = $aggregationStrategy ?? $this->createMock(AggregationStrategy::class);
         $store = $store ?? $this->createMock(Store::class);
 
-        return new Engine($fetchStrategy, $converter, $aggregationStrategy, $store);
+        return new Engine($fetchStrategy, $conversionStrategy, $aggregationStrategy, $store);
     }
 
     public function testConstructorAndGetters()
     {
         $fetchStrategy = $this->createMock(FetchStrategy::class);
-        $converter = $this->createMock(Converter::class);
+        $convStrategy = $this->createMock(ConversionStrategy::class);
         $aggStrategy = $this->createMock(AggregationStrategy::class);
         $store = $this->createMock(Store::class);
 
-        $engine = $this->createEngine($fetchStrategy, $converter, $aggStrategy, $store);
+        $engine = $this->createEngine($fetchStrategy, $convStrategy, $aggStrategy, $store);
 
-        self::assertSame($converter, $engine->getConverter());
         self::assertSame($store, $engine->getStore());
     }
 
@@ -53,10 +53,10 @@ class EngineTest extends TestCase
     {
         $fetchStrategy = $this->createMock(FetchStrategy::class);
         $catalog = $this->createMock(Catalog::class);
-        $converter = $this->createMock(Converter::class);
+        $convStrategy = $this->createMock(ConversionStrategy::class);
         $aggStrategy = $this->createMock(AggregationStrategy::class);
         $store = $this->createMock(Store::class);
-        $engine = $this->createEngine($fetchStrategy, $converter, $aggStrategy, $store);
+        $engine = $this->createEngine($fetchStrategy, $convStrategy, $aggStrategy, $store);
 
         $source = $this->createMock(Source::class);
         $cursor = 'ABC123';
@@ -86,7 +86,15 @@ class EngineTest extends TestCase
                 ->with($query->source, $query->cursor, $query->count)
                 ->willReturn($fetchResult);
         $fetchStrategy->expects($this->once())->method('getCatalog')->with($query->source)->willReturn($catalog);
-        $converter->expects($this->once())->method('convertMultiple')->with($fetchItems)->willReturn($convItems);
+
+        $convStrategy->method('beforeBatch')->willReturnArgument(0);
+        $convStrategy->method('afterBatch')->willReturnArgument(0);
+        $convStrategy->method('finalize')->willReturnArgument(0);
+
+        $convStrategy->expects($this->exactly(count($fetchItems)))
+                     ->method('convert')
+                     ->withConsecutive([$fetchItems[0]], [$fetchItems[1]], [$fetchItems[2]])
+                     ->willReturn($convItems[0], $convItems[1], $convItems[2]);
 
         $result = $engine->fetch($query);
 
@@ -97,14 +105,291 @@ class EngineTest extends TestCase
         self::assertEquals($errors, $result->errors);
     }
 
+    public function testConvertMultiple()
+    {
+        $store = $this->createMock(Store::class);
+        $strategy = $this->createMock(ConversionStrategy::class);
+
+        $source = $this->createMock(Source::class);
+        $items = [
+            new Item('1', 1, [$source]),
+            new Item('2', 2, [$source]),
+            new Item('3', 3, [$source]),
+        ];
+
+        $query = StoreQuery::forIds(['1', '2', '3']);
+        $store->expects($this->once())->method('query')->with($query)->willReturn(new StoreResult([]));
+
+        $strategy->expects($this->once())->method('beforeBatch')->willReturnArgument(0);
+        $strategy->expects($this->exactly(3))->method('convert')->willReturnArgument(0);
+        $strategy->expects($this->never())->method('reconcile');
+        $strategy->expects($this->exactly(3))->method('finalize')->willReturnArgument(0);
+        $strategy->expects($this->once())->method('afterBatch')->willReturnArgument(0);
+
+        $engine = $this->createEngine(null, $strategy, null, $store);
+        $actualItems = $engine->convert($items);
+
+        self::assertEquals($items, $actualItems);
+    }
+
+    public function testConvertMultipleBeforeBatch()
+    {
+        $store = $this->createMock(Store::class);
+        $strategy = $this->createMock(ConversionStrategy::class);
+
+        $source = $this->createMock(Source::class);
+        $items = [
+            new Item('1', 1, [$source]),
+            new Item('2', 2, [$source]),
+            new Item('3', 3, [$source]),
+        ];
+        $changed = [
+            $items[0],
+            new Item('4', 4, [$source]),
+            $items[2],
+        ];
+
+        $query = StoreQuery::forIds(['1', '2', '3']);
+        $store->expects($this->once())->method('query')->with($query)->willReturn(new StoreResult([]));
+
+        $strategy->expects($this->once())->method('beforeBatch')->with($items)->willReturn($changed);
+        $strategy->expects($this->exactly(3))->method('convert')->willReturnArgument(0);
+        $strategy->expects($this->never())->method('reconcile');
+        $strategy->expects($this->exactly(3))->method('finalize')->willReturnArgument(0);
+        $strategy->expects($this->once())->method('afterBatch')->willReturnArgument(0);
+
+        $engine = $this->createEngine(null, $strategy, null, $store);
+        $actualItems = $engine->convert($items);
+
+        self::assertEquals($changed, $actualItems);
+    }
+
+    public function testConvertMultipleAfterBatch()
+    {
+        $store = $this->createMock(Store::class);
+        $strategy = $this->createMock(ConversionStrategy::class);
+
+        $source = $this->createMock(Source::class);
+        $items = [
+            new Item('1', 1, [$source]),
+            new Item('2', 2, [$source]),
+            new Item('3', 3, [$source]),
+        ];
+        $changed = [
+            $items[0],
+            new Item('4', 4, [$source]),
+            $items[2],
+        ];
+
+        $query = StoreQuery::forIds(['1', '2', '3']);
+        $store->expects($this->once())->method('query')->with($query)->willReturn(new StoreResult([]));
+
+        $strategy->expects($this->once())->method('beforeBatch')->willReturnArgument(0);
+        $strategy->expects($this->exactly(3))->method('convert')->willReturnArgument(0);
+        $strategy->expects($this->never())->method('reconcile');
+        $strategy->expects($this->exactly(3))->method('finalize')->willReturnArgument(0);
+        $strategy->expects($this->once())->method('afterBatch')->with($items)->willReturn($changed);
+
+        $engine = $this->createEngine(null, $strategy, null, $store);
+        $actualItems = $engine->convert($items);
+
+        self::assertEquals($changed, $actualItems);
+    }
+
+    public function testConvertMultipleFilteredItems()
+    {
+        $store = $this->createMock(Store::class);
+        $strategy = $this->createMock(ConversionStrategy::class);
+
+        $source = $this->createMock(Source::class);
+        $items = [
+            new Item('1', 1, [$source]),
+            new Item('2', 2, [$source]),
+            new Item('3', 3, [$source]),
+        ];
+        $expected = [
+            $items[0],
+            $items[2],
+        ];
+
+        $query = StoreQuery::forIds(['1', '2', '3']);
+        $store->expects($this->once())->method('query')->with($query)->willReturn(new StoreResult([]));
+
+        $strategy->expects($this->once())->method('beforeBatch')->willReturnArgument(0);
+        $strategy->expects($this->exactly(3))->method('convert')->willReturnOnConsecutiveCalls(
+            $items[0],
+            null,
+            $items[2]
+        );
+        $strategy->expects($this->never())->method('reconcile');
+        $strategy->expects($this->exactly(2))->method('finalize')->willReturnArgument(0);
+        $strategy->expects($this->once())->method('afterBatch')->willReturnArgument(0);
+
+        $engine = $this->createEngine(null, $strategy, null, $store);
+        $actualItems = $engine->convert($items);
+
+        self::assertEquals($expected, $actualItems);
+    }
+
+    public function testConvertMultipleWithReconciliation()
+    {
+        $store = $this->createMock(Store::class);
+        $strategy = $this->createMock(ConversionStrategy::class);
+
+        $source = $this->createMock(Source::class);
+
+        $item1 = new Item('1', 1, [$source]);
+        $item2 = new Item('2', 2, [$source]);
+        $item3 = new Item('3', 3, [$source]);
+
+        $existing1 = new Item('1', 1, [$source]);
+        $existing3 = new Item('3', 3, [$source]);
+
+        $reconciled1 = new Item('1', 1, [$source]);
+        $reconciled3 = new Item('3', 3, [$source]);
+
+        $expected = [
+            $reconciled1,
+            $item2,
+            $reconciled3,
+        ];
+
+        $query = StoreQuery::forIds(['1', '2', '3']);
+        $store->expects($this->once())
+              ->method('query')
+              ->with($query)
+              ->willReturn(new StoreResult([$existing1, $existing3]));
+
+        $strategy->expects($this->once())->method('beforeBatch')->willReturnArgument(0);
+        $strategy->expects($this->once())->method('afterBatch')->willReturnArgument(0);
+
+        $strategy->expects($this->exactly(3))
+                 ->method('convert')
+                 ->withConsecutive([$item1], [$item2], [$item3])
+                 ->willReturnArgument(0);
+        $strategy->expects($this->exactly(2))
+                 ->method('reconcile')
+                 ->withConsecutive(
+                     [$item1, $existing1],
+                     [$item3, $existing3]
+                 )
+                 ->willReturnOnConsecutiveCalls(
+                     $reconciled1,
+                     $reconciled3
+                 );
+
+        $strategy->expects($this->exactly(3))
+                 ->method('finalize')
+                 ->withConsecutive(
+                     [$reconciled1],
+                     [$item2],
+                     [$reconciled3]
+                 )
+                 ->willReturnArgument(0);
+
+        $engine = $this->createEngine(null, $strategy, null, $store);
+        $actualItems = $engine->convert([$item1, $item2, $item3]);
+
+        self::assertEquals($expected, $actualItems);
+    }
+
+    public function testConvertMultipleShortCircuitNoYield()
+    {
+        $store = $this->createMock(Store::class);
+        $strategy = $this->createMock(ConversionStrategy::class);
+
+        $source = $this->createMock(Source::class);
+        $items = [
+            new Item('1', 1, [$source]),
+            new Item('2', 2, [$source]),
+            new Item('3', 3, [$source]),
+            new Item('4', 4, [$source]),
+        ];
+        $expected = [
+            $items[0],
+        ];
+
+        $query = StoreQuery::forIds(['1', '2', '3', '4']);
+        $store->expects($this->once())->method('query')->with($query)->willReturn(new StoreResult([]));
+
+        $strategy->expects($this->once())->method('beforeBatch')->willReturnArgument(0);
+        $strategy->expects($this->once())->method('afterBatch')->willReturnArgument(0);
+
+        // Convert short-circuits after first 2 items
+        $count = 0;
+        $strategy->expects($this->exactly(2))->method('convert')->willReturnCallback(function ($item) use (&$count) {
+            $count++;
+            if ($count >= 2) {
+                throw new ConversionShortCircuit();
+            }
+            return $item;
+        });
+
+        $strategy->expects($this->never())->method('reconcile');
+        $strategy->expects($this->exactly(1))
+                 ->method('finalize')
+                 ->withConsecutive([$items[0]])
+                 ->willReturnArgument(0);
+
+        $engine = $this->createEngine(null, $strategy, null, $store);
+        $actualItems = $engine->convert($items);
+
+        self::assertEquals($expected, $actualItems);
+    }
+
+    public function testConvertMultipleShortCircuitYield()
+    {
+        $store = $this->createMock(Store::class);
+        $strategy = $this->createMock(ConversionStrategy::class);
+
+        $source = $this->createMock(Source::class);
+        $items = [
+            new Item('1', 1, [$source]),
+            new Item('2', 2, [$source]),
+            new Item('3', 3, [$source]),
+            new Item('4', 4, [$source]),
+        ];
+        $expected = [
+            $items[0],
+            $items[1],
+        ];
+
+        $query = StoreQuery::forIds(['1', '2', '3', '4']);
+        $store->expects($this->once())->method('query')->with($query)->willReturn(new StoreResult([]));
+
+        $strategy->expects($this->once())->method('beforeBatch')->willReturnArgument(0);
+        $strategy->expects($this->once())->method('afterBatch')->willReturnArgument(0);
+
+        // Convert short-circuits after first 2 items
+        $count = 0;
+        $strategy->expects($this->exactly(2))->method('convert')->willReturnCallback(function ($item) use (&$count) {
+            $count++;
+            if ($count >= 2) {
+                throw new ConversionShortCircuit($item);
+            }
+            return $item;
+        });
+
+        $strategy->expects($this->never())->method('reconcile');
+        $strategy->expects($this->exactly(1))
+                 ->method('finalize')
+                 ->withConsecutive([$items[0]])
+                 ->willReturnArgument(0);
+
+        $engine = $this->createEngine(null, $strategy, null, $store);
+        $actualItems = $engine->convert($items);
+
+        self::assertEquals($expected, $actualItems);
+    }
+
     public function testImport()
     {
         $fetchStrategy = $this->createMock(FetchStrategy::class);
         $catalog = $this->createMock(Catalog::class);
-        $converter = $this->createMock(Converter::class);
+        $convStrategy = $this->createMock(ConversionStrategy::class);
         $aggStrategy = $this->createMock(AggregationStrategy::class);
         $store = $this->createMock(Store::class);
-        $engine = $this->createEngine($fetchStrategy, $converter, $aggStrategy, $store);
+        $engine = $this->createEngine($fetchStrategy, $convStrategy, $aggStrategy, $store);
 
         $source = $this->createMock(Source::class);
         $cursor = 'ABC123';
@@ -134,7 +419,12 @@ class EngineTest extends TestCase
                 ->with($query->source, $query->cursor, $query->count)
                 ->willReturn($result);
         $fetchStrategy->expects($this->once())->method('getCatalog')->with($query->source)->willReturn($catalog);
-        $converter->expects($this->once())->method('convertMultiple')->with($items)->willReturn($items);
+
+        $convStrategy->method('beforeBatch')->willReturnArgument(0);
+        $convStrategy->method('afterBatch')->willReturnArgument(0);
+        $convStrategy->method('finalize')->willReturnArgument(0);
+        $convStrategy->method('convert')->willReturnArgument(0);
+
         $store->expects($this->once())->method('insert')->with($items)->willReturn(new StoreResult($storedItems));
 
         $result = $engine->import($query);
