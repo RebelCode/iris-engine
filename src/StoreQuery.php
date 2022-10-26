@@ -107,4 +107,14 @@ class StoreQuery
     {
         return new self($this->criterion, $this->order, $this->count, $offset);
     }
+
+    /**
+     * Creates a copy of the query without a count and offset.
+     *
+     * @return self The new query.
+     */
+    public function withoutPagination(): self
+    {
+        return $this->withCount(null)->withOffset(0);
+    }
 }

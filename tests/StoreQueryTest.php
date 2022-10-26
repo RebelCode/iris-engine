@@ -129,4 +129,20 @@ class StoreQueryTest extends TestCase
         $this->assertNull($query2->count);
         $this->assertEquals($offset, $query2->offset);
     }
+
+    public function testWithoutPagination()
+    {
+        $original = new StoreQuery(null, null, 10, 5);
+        $query = clone $original;
+
+        $query2 = $query->withoutPagination();
+
+        $this->assertNotSame($query, $query2, 'Returned query should be a new instance');
+        $this->assertEquals($original, $query, 'Original query should not be modified');
+
+        $this->assertNull($query2->criterion);
+        $this->assertNull($query2->order);
+        $this->assertNull($query2->count);
+        $this->assertEquals(0, $query2->offset);
+    }
 }

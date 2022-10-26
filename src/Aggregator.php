@@ -40,9 +40,7 @@ class Aggregator
 
         $manualPagination = $this->strategy->doManualPagination($feed, $query);
 
-        $storeQuery = $manualPagination
-            ? $query->withCount(null)->withOffset(0)
-            : $query;
+        $storeQuery = $manualPagination ? $query->withoutPagination() : $query;
 
         $items = $this->store->query($storeQuery)->getItems();
         $this->removeDuplicates($items);
