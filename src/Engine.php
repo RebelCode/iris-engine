@@ -110,7 +110,15 @@ class Engine
         );
     }
 
-    /** Aggregates items from the store for a feed. */
+    /**
+     * Aggregates items from the store for a feed.
+     *
+     * @param Feed $feed The feed to aggregate items for.
+     * @param int|null $count The maximum number of items to aggregate, or null to get all the items.
+     * @param int $offset The offset of the first item to aggregate.
+     * @return AggregateResult The aggregation result.
+     * @throws StoreException If an error occurred while reading items from the store.
+     */
     public function aggregate(Feed $feed, ?int $count = null, int $offset = 0): AggregateResult
     {
         $query = $this->aggStrategy->getFeedQuery($feed, $count, $offset);
