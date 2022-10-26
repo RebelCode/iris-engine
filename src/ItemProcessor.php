@@ -13,10 +13,10 @@ interface ItemProcessor
     /**
      * Processes a list of items to generate a new, modified list of items.
      *
-     * @param Item $items The items to process.
+     * @param list<Item> $items The items to process.
      * @param Feed $feed The feed that the items belong to.
      * @param StoreQuery $query The query that was used to fetch the items.
-     * @return Item The processed items.
+     * @return list<Item> The processed items.
      */
     public function process(array $items, Feed $feed, StoreQuery $query): array;
 }
