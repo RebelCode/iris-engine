@@ -1,9 +1,9 @@
 <?php
 
-namespace RebelCode\Iris\Test\Func\Aggregator;
+namespace RebelCode\Iris\Test\Func\ItemProcessor;
 
 use PHPUnit\Framework\TestCase;
-use RebelCode\Iris\Aggregator\CompositeItemProcessor;
+use RebelCode\Iris\ItemProcessor\CompositeItemProcessor;
 use RebelCode\Iris\Data\Feed;
 use RebelCode\Iris\Data\Item;
 use RebelCode\Iris\ItemProcessor;

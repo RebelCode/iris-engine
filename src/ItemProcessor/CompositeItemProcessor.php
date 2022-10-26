@@ -1,6 +1,6 @@
 <?php
 
-namespace RebelCode\Iris\Aggregator;
+namespace RebelCode\Iris\ItemProcessor;
 
 use RebelCode\Iris\Data\Feed;
 use RebelCode\Iris\ItemProcessor;

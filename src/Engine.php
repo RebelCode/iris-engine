@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace RebelCode\Iris;
 
-use RebelCode\Iris\Aggregator\NoopItemProcessor;
+use RebelCode\Iris\ItemProcessor\NoopItemProcessor;
 use RebelCode\Iris\Data\Feed;
 use RebelCode\Iris\Exception\ConversionException;
 use RebelCode\Iris\Exception\FetchException;
