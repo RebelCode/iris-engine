@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace RebelCode\Iris\Test\Func;
 
 use PHPUnit\Framework\TestCase;
-use RebelCode\Iris\Aggregator\AggregationStrategy;
+use RebelCode\Iris\AggregationStrategy;
 use RebelCode\Iris\Aggregator\ItemProcessor;
 use RebelCode\Iris\Catalog;
 use RebelCode\Iris\Converter;
