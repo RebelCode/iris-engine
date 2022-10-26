@@ -44,16 +44,17 @@ class Aggregator
         $items = $this->store->query($storeQuery)->getUnique();
         $storeTotal = count($items);
 
-        $preProcessors = $this->strategy->getPreProcessors($feed, $query);
-        foreach ($preProcessors as $processor) {
-            $processor->process($items, $feed, $query);
+        $preProcessor = $this->strategy->getPreProcessor($feed, $query);
+        $postProcessor = $this->strategy->getPostProcessor($feed, $query);
+
+        if ($preProcessor !== null) {
+            $preProcessor->process($items, $feed, $query);
         }
 
         $preTotal = count($items);
 
-        $postProcessors = $this->strategy->getPostProcessors($feed, $query);
-        foreach ($postProcessors as $processor) {
-            $processor->process($items, $feed, $query);
+        if ($postProcessor !== null) {
+            $postProcessor->process($items, $feed, $query);
         }
 
         $postTotal = count($items);

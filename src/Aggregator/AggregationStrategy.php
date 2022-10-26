@@ -15,31 +15,37 @@ interface AggregationStrategy
     public function getFeedQuery(Feed $feed, ?int $count = null, int $offset = 0): ?StoreQuery;
 
     /**
-     * Retrieves the pre-processors to use for a given feed.
+     * Retrieves the pre-processor to use for a given feed.
      *
-     * Pre-processors will make modifications to the items before they become part of the aggregation result.
+     * The pre-processors is used to make modifications to the items before they become part of the aggregation result.
      * These modifications will also affect the result's {@link AggregateResult::$preTotal} count.
      *
      * It is recommended to use pre-processors to perform manipulations that rely on the feed. That is, given the same
-     * feed, the same pre-processing is applied to the items regardless of the query.
+     * feed, the same pre-processing is applied to the items regardless of the query. This ensures that the
+     * {@link AggregateResult::$preTotal} count represent the total number of items that are available for that feed.
      *
-     * @return ItemProcessor[]
+     * @param Feed $feed The feed that was used to generate the query for the store.
+     * @param StoreQuery $query The query that was used to obtain the items from the store.
+     * @return ItemProcessor|null The pre-processor, or null if no pre-processing is required.
      */
-    public function getPreProcessors(Feed $feed, StoreQuery $query): array;
+    public function getPreProcessor(Feed $feed, StoreQuery $query): ?ItemProcessor;
 
     /**
-     * Retrieves the post-processors to use for a given feed.
+     * Retrieves the post-processor to use for a given feed.
      *
-     * Post-processors will make modifications to the list of items before they become part of the aggregation result,
-     * but after the pre-processors have made already made their modifications. Post-processors will also affect the
-     * result's {@link AggregateResult::$postTotal} count.
+     * The post-processors is used to make modifications to the list of items before they become part of the
+     * aggregation result, but after the pre-processor has already made their modifications. Post-processors will also
+     * affect the result's {@link AggregateResult::$postTotal} count.
      *
      * It is recommended to use post-processors to perform manipulations that rely on the query, rather than the feed.
-     * That is, the same post-processing is applied to the items regardless of the feed.
+     * That is, the same post-processing is applied to the items regardless of the feed. This ensures that the
+     * {@link AggregateResult::$postTotal} count represent the total number of items that satisfy the query.
      *
-     * @return ItemProcessor[]
+     * @param Feed $feed The feed that was used to generate the query for the store.
+     * @param StoreQuery $query The query that will be used to obtain the items from the store.
+     * @return ItemProcessor|null The post-processor, or null if no post-processing is required.
      */
-    public function getPostProcessors(Feed $feed, StoreQuery $query): array;
+    public function getPostProcessor(Feed $feed, StoreQuery $query): ?ItemProcessor;
 
     /**
      * Whether the aggregator should apply pagination manually after post-processing.

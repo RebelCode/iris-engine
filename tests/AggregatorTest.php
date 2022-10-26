@@ -27,25 +27,13 @@ class AggregatorTest extends TestCase
         $count = 9;
         $offset = 3;
 
-        $preProcessors = [
-            $this->createMock(ItemProcessor::class),
-            $this->createMock(ItemProcessor::class),
-        ];
-        $postProcessors = [
-            $this->createMock(ItemProcessor::class),
-            $this->createMock(ItemProcessor::class),
-        ];
+        $preProcessor = $this->createMock(ItemProcessor::class);
+        $postProcessor = $this->createMock(ItemProcessor::class);
 
         $strategy = $this->createMock(AggregationStrategy::class);
         $strategy->expects($this->once())->method('getFeedQuery')->with($feed, $count, $offset)->willReturn($query);
-        $strategy->expects($this->once())
-                 ->method('getPreProcessors')
-                 ->with($feed, $query)
-                 ->willReturn($preProcessors);
-        $strategy->expects($this->once())
-                 ->method('getPostProcessors')
-                 ->with($feed, $query)
-                 ->willReturn($postProcessors);
+        $strategy->expects($this->once())->method('getPreProcessor')->with($feed, $query)->willReturn($preProcessor);
+        $strategy->expects($this->once())->method('getPostProcessor')->with($feed, $query)->willReturn($postProcessor);
 
         $items = [
             new Item('1', 1, [$source1]),
@@ -55,13 +43,8 @@ class AggregatorTest extends TestCase
 
         $store->expects($this->once())->method('query')->with($query)->willReturn(new StoreResult($items));
 
-        foreach ($preProcessors as $processor) {
-            $processor->expects($this->once())->method('process')->with($items, $feed, $query);
-        }
-
-        foreach ($postProcessors as $processor) {
-            $processor->expects($this->once())->method('process')->with($items, $feed, $query);
-        }
+        $preProcessor->expects($this->once())->method('process')->with($items, $feed, $query);
+        $postProcessor->expects($this->once())->method('process')->with($items, $feed, $query);
 
         $aggregator = new Aggregator($store, $strategy);
         $result = $aggregator->aggregate($feed, $count, $offset);
@@ -79,30 +62,19 @@ class AggregatorTest extends TestCase
         $count = 9;
         $offset = 3;
 
-        $preProcessors = [
-            $this->createMock(ItemProcessor::class),
-            $this->createMock(ItemProcessor::class),
-        ];
-        $postProcessors = [
-            $this->createMock(ItemProcessor::class),
-            $this->createMock(ItemProcessor::class),
-        ];
+        $preProcessor = $this->createMock(ItemProcessor::class);
+        $postProcessor = $this->createMock(ItemProcessor::class);
 
         $strategy = $this->createConfiguredMock(AggregationStrategy::class, [
             'getFeedQuery' => null,
-            'getPreProcessors' => $preProcessors,
-            'getPostProcessors' => $postProcessors,
+            'getPreProcessor' => $preProcessor,
+            'getPostProcessor' => $postProcessor,
         ]);
 
         $store->expects($this->never())->method('query');
 
-        foreach ($preProcessors as $processor) {
-            $processor->expects($this->never())->method('process');
-        }
-
-        foreach ($postProcessors as $processor) {
-            $processor->expects($this->never())->method('process');
-        }
+        $preProcessor->expects($this->never())->method('process');
+        $postProcessor->expects($this->never())->method('process');
 
         $aggregator = new Aggregator($store, $strategy);
         $result = $aggregator->aggregate($feed, $count, $offset);
@@ -123,19 +95,13 @@ class AggregatorTest extends TestCase
         $count = 9;
         $offset = 3;
 
-        $preProcessors = [
-            $this->createMock(ItemProcessor::class),
-            $this->createMock(ItemProcessor::class),
-        ];
-        $postProcessors = [
-            $this->createMock(ItemProcessor::class),
-            $this->createMock(ItemProcessor::class),
-        ];
+        $preProcessor = $this->createMock(ItemProcessor::class);
+        $postProcessor = $this->createMock(ItemProcessor::class);
 
         $strategy = $this->createConfiguredMock(AggregationStrategy::class, [
             'getFeedQuery' => $query,
-            'getPreProcessors' => $preProcessors,
-            'getPostProcessors' => $postProcessors,
+            'getPreProcessor' => $preProcessor,
+            'getPostProcessor' => $postProcessor,
         ]);
 
         $itemsWithDupes = [
@@ -150,13 +116,8 @@ class AggregatorTest extends TestCase
 
         $store->expects($this->once())->method('query')->with($query)->willReturn(new StoreResult($itemsWithDupes));
 
-        foreach ($preProcessors as $processor) {
-            $processor->expects($this->once())->method('process')->with($itemsNoDupes, $feed, $query);
-        }
-
-        foreach ($postProcessors as $processor) {
-            $processor->expects($this->once())->method('process')->with($itemsNoDupes, $feed, $query);
-        }
+        $preProcessor->expects($this->once())->method('process')->with($itemsNoDupes, $feed, $query);
+        $postProcessor->expects($this->once())->method('process')->with($itemsNoDupes, $feed, $query);
 
         $aggregator = new Aggregator($store, $strategy);
         $result = $aggregator->aggregate($feed, $count, $offset);
@@ -177,26 +138,20 @@ class AggregatorTest extends TestCase
         $count = 9;
         $offset = 3;
 
-        $preProcessors = [
-            new class implements ItemProcessor {
-                public function process(array &$items, Feed $feed, StoreQuery $query): void
-                {
-                    unset($items[1]);
-                    $items = array_values($items);
-                }
-            },
-            $this->createMock(ItemProcessor::class),
-        ];
+        $preProcessor = new class implements ItemProcessor {
+            public function process(array &$items, Feed $feed, StoreQuery $query): void
+            {
+                unset($items[1]);
+                $items = array_values($items);
+            }
+        };
 
-        $postProcessors = [
-            $this->createMock(ItemProcessor::class),
-            $this->createMock(ItemProcessor::class),
-        ];
+        $postProcessor = $this->createMock(ItemProcessor::class);
 
         $strategy = $this->createConfiguredMock(AggregationStrategy::class, [
             'getFeedQuery' => $query,
-            'getPreProcessors' => $preProcessors,
-            'getPostProcessors' => $postProcessors,
+            'getPreProcessor' => $preProcessor,
+            'getPostProcessor' => $postProcessor,
         ]);
 
         $storeItems = [
@@ -211,10 +166,7 @@ class AggregatorTest extends TestCase
 
         $store->expects($this->once())->method('query')->with($query)->willReturn(new StoreResult($storeItems));
 
-        $preProcessors[1]->expects($this->once())->method('process')->with($processedItems, $feed, $query);
-        foreach ($postProcessors as $processor) {
-            $processor->expects($this->once())->method('process')->with($processedItems, $feed, $query);
-        }
+        $postProcessor->expects($this->once())->method('process')->with($processedItems, $feed, $query);
 
         $aggregator = new Aggregator($store, $strategy);
         $result = $aggregator->aggregate($feed, $count, $offset);
@@ -235,26 +187,20 @@ class AggregatorTest extends TestCase
         $count = 9;
         $offset = 3;
 
-        $preProcessors = [
-            $this->createMock(ItemProcessor::class),
-            $this->createMock(ItemProcessor::class),
-        ];
+        $preProcessor = $this->createMock(ItemProcessor::class);
 
-        $postProcessors = [
-            new class implements ItemProcessor {
-                public function process(array &$items, Feed $feed, StoreQuery $query): void
-                {
-                    unset($items[1]);
-                    $items = array_values($items);
-                }
-            },
-            $this->createMock(ItemProcessor::class),
-        ];
+        $postProcessor = new class implements ItemProcessor {
+            public function process(array &$items, Feed $feed, StoreQuery $query): void
+            {
+                unset($items[1]);
+                $items = array_values($items);
+            }
+        };
 
         $strategy = $this->createConfiguredMock(AggregationStrategy::class, [
             'getFeedQuery' => $query,
-            'getPreProcessors' => $preProcessors,
-            'getPostProcessors' => $postProcessors,
+            'getPreProcessor' => $preProcessor,
+            'getPostProcessor' => $postProcessor,
         ]);
 
         $storeItems = [
@@ -269,10 +215,7 @@ class AggregatorTest extends TestCase
 
         $store->expects($this->once())->method('query')->with($query)->willReturn(new StoreResult($storeItems));
 
-        foreach ($preProcessors as $processor) {
-            $processor->expects($this->once())->method('process')->with($storeItems, $feed, $query);
-        }
-        $postProcessors[1]->expects($this->once())->method('process')->with($processedItems, $feed, $query);
+        $preProcessor->expects($this->once())->method('process')->with($storeItems, $feed, $query);
 
         $aggregator = new Aggregator($store, $strategy);
         $result = $aggregator->aggregate($feed, $count, $offset);
@@ -301,20 +244,10 @@ class AggregatorTest extends TestCase
             }
         };
 
-        $preProcessors = [
-            $removeProcessor,
-            $this->createMock(ItemProcessor::class),
-        ];
-
-        $postProcessors = [
-            $removeProcessor,
-            $this->createMock(ItemProcessor::class),
-        ];
-
         $strategy = $this->createConfiguredMock(AggregationStrategy::class, [
             'getFeedQuery' => $query,
-            'getPreProcessors' => $preProcessors,
-            'getPostProcessors' => $postProcessors,
+            'getPreProcessor' => $removeProcessor,
+            'getPostProcessor' => $removeProcessor,
         ]);
 
         $storeItems = [
@@ -331,9 +264,6 @@ class AggregatorTest extends TestCase
         ];
 
         $store->expects($this->once())->method('query')->with($query)->willReturn(new StoreResult($storeItems));
-
-        $preProcessors[1]->expects($this->once())->method('process')->with($preProcessedItems, $feed, $query);
-        $postProcessors[1]->expects($this->once())->method('process')->with($postProcessedItems, $feed, $query);
 
         $aggregator = new Aggregator($store, $strategy);
         $result = $aggregator->aggregate($feed, $count, $offset);
@@ -357,25 +287,24 @@ class AggregatorTest extends TestCase
 
         $newItem = new Item('4', 4, [$source1]);
 
-        $preProcessors = [
-            new class($newItem) implements ItemProcessor {
-                protected $newItem;
+        $preProcessor = new class($newItem) implements ItemProcessor {
+            protected $newItem;
 
-                public function __construct($newItem) {
-                    $this->newItem = $newItem;
-                }
+            public function __construct($newItem)
+            {
+                $this->newItem = $newItem;
+            }
 
-                public function process(array &$items, Feed $feed, StoreQuery $query): void
-                {
-                    array_splice($items, 1, 0, [$this->newItem]);
-                }
-            },
-        ];
+            public function process(array &$items, Feed $feed, StoreQuery $query): void
+            {
+                array_splice($items, 1, 0, [$this->newItem]);
+            }
+        };
 
         $strategy = $this->createConfiguredMock(AggregationStrategy::class, [
             'getFeedQuery' => $query,
-            'getPreProcessors' => $preProcessors,
-            'getPostProcessors' => [],
+            'getPreProcessor' => $preProcessor,
+            'getPostProcessor' => null,
             'doManualPagination' => false,
         ]);
 
@@ -421,8 +350,8 @@ class AggregatorTest extends TestCase
 
         $strategy = $this->createMock(AggregationStrategy::class);
         $strategy->expects($this->once())->method('getFeedQuery')->with($feed, $count, $offset)->willReturn($query);
-        $strategy->expects($this->once())->method('getPreProcessors')->with($feed, $query)->willReturn([]);
-        $strategy->expects($this->once())->method('getPostProcessors')->with($feed, $query)->willReturn([]);
+        $strategy->expects($this->once())->method('getPreProcessor')->with($feed, $query)->willReturn(null);
+        $strategy->expects($this->once())->method('getPostProcessor')->with($feed, $query)->willReturn(null);
         $strategy->expects($this->once())->method('doManualPagination')->with($feed, $query)->willReturn(true);
 
         $storeItems = [
