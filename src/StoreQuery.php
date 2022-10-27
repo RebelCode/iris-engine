@@ -25,10 +25,12 @@ class StoreQuery
     public $offset;
 
     /**
-     * @param Criterion|null $criterion
-     * @param Order|null $order
-     * @param int|null $count
-     * @param int $offset
+     * Constructor.
+     *
+     * @param Criterion|null $criterion Optional criterion for the query.
+     * @param Order|null $order Optional ordering for the query.
+     * @param int|null $count Optional count for the query. If null, all results will be returned.
+     * @param int $offset Optional offset for the query. Defaults to 0.
      */
     public function __construct(?Criterion $criterion = null, ?Order $order = null, ?int $count = null, int $offset = 0)
     {

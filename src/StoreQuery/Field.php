@@ -62,7 +62,7 @@ class Field
     /**
      * Returns a field instance that represents the ID prop of an item.
      *
-     * @return self
+     * @return self The field instance.
      */
     public static function id(): self
     {
@@ -74,7 +74,7 @@ class Field
     /**
      * Returns a field instance that represents the local ID prop of an item.
      *
-     * @return self
+     * @return self The field instance.
      */
     public static function localId(): self
     {
@@ -86,7 +86,7 @@ class Field
     /**
      * Returns a field instance that represents the source prop of an item.
      *
-     * @return self
+     * @return self The field instance.
      */
     public static function source(): self
     {
