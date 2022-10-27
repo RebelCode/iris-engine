@@ -47,6 +47,25 @@ class Engine
         $this->store = $store;
     }
 
+    /** Retrieves the fetches used by the engine. */
+    public function getFetcher(): Fetcher
+    {
+        return $this->fetcher;
+    }
+
+    /** Retrieves the converter used by the engine. */
+    public function getConverter(): Converter
+    {
+        return $this->converter;
+    }
+
+    /** Retrieves the aggregator used by the engine. */
+    public function getAggregator(): Aggregator
+    {
+        return $this->aggregator;
+    }
+
+    /** Retrieves the store used by the engine. */
     public function getStore(): Store
     {
         return $this->store;

@@ -45,6 +45,9 @@ class EngineTest extends TestCase
 
         $engine = $this->createEngine($fetcher, $converter, $aggregator, $store);
 
+        self::assertSame($fetcher, $engine->getFetcher());
+        self::assertSame($converter, $engine->getConverter());
+        self::assertSame($aggregator, $engine->getAggregator());
         self::assertSame($store, $engine->getStore());
     }
 
