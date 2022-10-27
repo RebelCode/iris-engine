@@ -41,32 +41,6 @@ class StoreQuery
     }
 
     /**
-     * Static constructor that creates a query for a list of items with specific IDs.
-     *
-     * @param string[] $ids The IDs of the items.
-     * @return self The created query.
-     */
-    public static function forIds(array $ids): self
-    {
-        return new self(new Expression(Field::id(), Expression::IN, $ids));
-    }
-
-    /**
-     * Static constructor that creates a query for a list of items with specific sources.
-     *
-     * @param Source[] $sources The sources of the items.
-     * @return self The created query.
-     */
-    public static function forSources(array $sources): self
-    {
-        $sourceIds = array_map(function (Source $source) {
-            return $source->id;
-        }, $sources);
-
-        return new self(new Expression(Field::source(), Expression::IN, $sourceIds));
-    }
-
-    /**
      * Creates a copy of the query with a different criterion.
      *
      * @param Criterion $criterion The new criterion.
@@ -118,5 +92,31 @@ class StoreQuery
     public function withoutPagination(): self
     {
         return $this->withCount(null)->withOffset(0);
+    }
+
+    /**
+     * Static constructor that creates a query for a list of items with specific IDs.
+     *
+     * @param string[] $ids The IDs of the items.
+     * @return self The created query.
+     */
+    public static function forIds(array $ids): self
+    {
+        return new self(new Expression(Field::id(), Expression::IN, $ids));
+    }
+
+    /**
+     * Static constructor that creates a query for a list of items with specific sources.
+     *
+     * @param Source[] $sources The sources of the items.
+     * @return self The created query.
+     */
+    public static function forSources(array $sources): self
+    {
+        $sourceIds = array_map(function (Source $source) {
+            return $source->id;
+        }, $sources);
+
+        return new self(new Expression(Field::source(), Expression::IN, $sourceIds));
     }
 }

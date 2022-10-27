@@ -13,7 +13,7 @@ class StoreResult
     protected $items;
 
     /** @var array<string, Item>|null */
-    protected $_mapCache = null;
+    protected $mapCache = null;
 
     /**
      * Constructor.
@@ -62,15 +62,15 @@ class StoreResult
      */
     public function getMap(): array
     {
-        if ($this->_mapCache === null) {
-            $this->_mapCache = [];
+        if ($this->mapCache === null) {
+            $this->mapCache = [];
 
             foreach ($this->items as $item) {
-                $this->_mapCache[$item->id] = $item;
+                $this->mapCache[$item->id] = $item;
             }
         }
 
-        return $this->_mapCache;
+        return $this->mapCache;
     }
 
     /**
