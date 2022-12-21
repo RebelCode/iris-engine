@@ -36,6 +36,15 @@ class EngineTest extends TestCase
         return new Engine($fetcher, $converter, $aggregator, $store);
     }
 
+    protected function createItem(string $id = '', $localId = null, array $sources = []): Item
+    {
+        return $this->createConfiguredMock(Item::class, [
+            'getId' => $id,
+            'getLocalId' => $localId,
+            'getSources' => $sources,
+        ]);
+    }
+
     public function testConstructorAndGetters()
     {
         $fetcher = $this->createMock(Fetcher::class);
@@ -110,11 +119,10 @@ class EngineTest extends TestCase
         $store = $this->createMock(Store::class);
         $strategy = $this->createMock(Converter::class);
 
-        $source = $this->createMock(Source::class);
         $items = [
-            new Item('1', 1, [$source]),
-            new Item('2', 2, [$source]),
-            new Item('3', 3, [$source]),
+            $this->createItem('1'),
+            $this->createItem('2'),
+            $this->createItem('3'),
         ];
 
         $query = StoreQuery::forIds(['1', '2', '3']);
@@ -137,15 +145,14 @@ class EngineTest extends TestCase
         $store = $this->createMock(Store::class);
         $strategy = $this->createMock(Converter::class);
 
-        $source = $this->createMock(Source::class);
         $items = [
-            new Item('1', 1, [$source]),
-            new Item('2', 2, [$source]),
-            new Item('3', 3, [$source]),
+            $this->createItem('1'),
+            $this->createItem('2'),
+            $this->createItem('3'),
         ];
         $changed = [
             $items[0],
-            new Item('4', 4, [$source]),
+            $this->createItem('4'),
             $items[2],
         ];
 
@@ -169,15 +176,14 @@ class EngineTest extends TestCase
         $store = $this->createMock(Store::class);
         $strategy = $this->createMock(Converter::class);
 
-        $source = $this->createMock(Source::class);
         $items = [
-            new Item('1', 1, [$source]),
-            new Item('2', 2, [$source]),
-            new Item('3', 3, [$source]),
+            $this->createItem('1'),
+            $this->createItem('2'),
+            $this->createItem('3'),
         ];
         $changed = [
             $items[0],
-            new Item('4', 4, [$source]),
+            $this->createItem('4'),
             $items[2],
         ];
 
@@ -201,11 +207,10 @@ class EngineTest extends TestCase
         $store = $this->createMock(Store::class);
         $strategy = $this->createMock(Converter::class);
 
-        $source = $this->createMock(Source::class);
         $items = [
-            new Item('1', 1, [$source]),
-            new Item('2', 2, [$source]),
-            new Item('3', 3, [$source]),
+            $this->createItem('1'),
+            $this->createItem('2'),
+            $this->createItem('3'),
         ];
         $expected = [
             $items[0],
@@ -238,15 +243,15 @@ class EngineTest extends TestCase
 
         $source = $this->createMock(Source::class);
 
-        $item1 = new Item('1', 1, [$source]);
-        $item2 = new Item('2', 2, [$source]);
-        $item3 = new Item('3', 3, [$source]);
+        $item1 = $this->createItem('1', 1, [$source]);
+        $item2 = $this->createItem('2', 2, [$source]);
+        $item3 = $this->createItem('3', 3, [$source]);
 
-        $existing1 = new Item('1', 1, [$source]);
-        $existing3 = new Item('3', 3, [$source]);
+        $existing1 = $this->createItem('1', 1, [$source]);
+        $existing3 = $this->createItem('3', 3, [$source]);
 
-        $reconciled1 = new Item('1', 1, [$source]);
-        $reconciled3 = new Item('3', 3, [$source]);
+        $reconciled1 = $this->createItem('1', 1, [$source]);
+        $reconciled3 = $this->createItem('3', 3, [$source]);
 
         $expected = [
             $reconciled1,
@@ -298,12 +303,11 @@ class EngineTest extends TestCase
         $store = $this->createMock(Store::class);
         $strategy = $this->createMock(Converter::class);
 
-        $source = $this->createMock(Source::class);
         $items = [
-            new Item('1', 1, [$source]),
-            new Item('2', 2, [$source]),
-            new Item('3', 3, [$source]),
-            new Item('4', 4, [$source]),
+            $this->createConfiguredMock(Item::class, ['getId' => '1']),
+            $this->createConfiguredMock(Item::class, ['getId' => '2']),
+            $this->createConfiguredMock(Item::class, ['getId' => '3']),
+            $this->createConfiguredMock(Item::class, ['getId' => '4']),
         ];
         $expected = [
             $items[0],
@@ -342,12 +346,11 @@ class EngineTest extends TestCase
         $store = $this->createMock(Store::class);
         $strategy = $this->createMock(Converter::class);
 
-        $source = $this->createMock(Source::class);
         $items = [
-            new Item('1', 1, [$source]),
-            new Item('2', 2, [$source]),
-            new Item('3', 3, [$source]),
-            new Item('4', 4, [$source]),
+            $this->createConfiguredMock(Item::class, ['getId' => '1']),
+            $this->createConfiguredMock(Item::class, ['getId' => '2']),
+            $this->createConfiguredMock(Item::class, ['getId' => '3']),
+            $this->createConfiguredMock(Item::class, ['getId' => '4']),
         ];
         $expected = [
             $items[0],
@@ -453,9 +456,9 @@ class EngineTest extends TestCase
         $strategy->expects($this->once())->method('getPostProcessor')->with($feed, $query)->willReturn($postProcessor);
 
         $items = [
-            new Item('1', 1, [$source1]),
-            new Item('2', 2, [$source2]),
-            new Item('3', 3, [$source2]),
+            $this->createConfiguredMock(Item::class, ['getId' => '1', 'getSources' => [$source1]]),
+            $this->createConfiguredMock(Item::class, ['getId' => '2', 'getSources' => [$source2]]),
+            $this->createConfiguredMock(Item::class, ['getId' => '3', 'getSources' => [$source2]]),
         ];
 
         $store->expects($this->once())->method('query')->with($query)->willReturn(new StoreResult($items));
@@ -522,9 +525,9 @@ class EngineTest extends TestCase
         ]);
 
         $itemsWithDupes = [
-            new Item('1', 1, [$source1]),
-            new Item('1', 2, [$source2]),
-            new Item('3', 3, [$source2]),
+            $this->createItem('1', 1, [$source1]),
+            $this->createItem('1', 2, [$source2]),
+            $this->createItem('3', 3, [$source2]),
         ];
         $itemsNoDupes = [
             $itemsWithDupes[1],
@@ -571,9 +574,9 @@ class EngineTest extends TestCase
         ]);
 
         $storeItems = [
-            new Item('1', 1, [$source1]),
-            new Item('2', 2, [$source2]),
-            new Item('3', 3, [$source2]),
+            $this->createItem('1', 1, [$source1]),
+            $this->createItem('2', 2, [$source2]),
+            $this->createItem('3', 3, [$source2]),
         ];
         $processedItems = [
             $storeItems[0],
@@ -620,9 +623,9 @@ class EngineTest extends TestCase
         ]);
 
         $storeItems = [
-            new Item('1', 1, [$source1]),
-            new Item('2', 2, [$source2]),
-            new Item('3', 3, [$source2]),
+            $this->createItem('1', 1, [$source1]),
+            $this->createItem('2', 2, [$source2]),
+            $this->createItem('3', 3, [$source2]),
         ];
         $processedItems = [
             $storeItems[0],
@@ -669,9 +672,9 @@ class EngineTest extends TestCase
         ]);
 
         $storeItems = [
-            new Item('1', 1, [$source1]),
-            new Item('2', 2, [$source2]),
-            new Item('3', 3, [$source2]),
+            $this->createItem('1', 1, [$source1]),
+            $this->createItem('2', 2, [$source2]),
+            $this->createItem('3', 3, [$source2]),
         ];
         $preProcessedItems = [
             $storeItems[0],
@@ -721,12 +724,12 @@ class EngineTest extends TestCase
             'doManualPagination' => false,
         ]);
 
-        $newItem = new Item('4', 4, [$source1]);
+        $newItem = $this->createItem('4', 4, [$source1]);
 
         $storeItems = [
-            new Item('1', 1, [$source1]),
-            new Item('2', 2, [$source2]),
-            new Item('3', 3, [$source2]),
+            $this->createItem('1', 1, [$source1]),
+            $this->createItem('2', 2, [$source2]),
+            $this->createItem('3', 3, [$source2]),
         ];
         $processedItems = [
             $storeItems[0],
@@ -775,10 +778,10 @@ class EngineTest extends TestCase
         $strategy->expects($this->once())->method('doManualPagination')->with($feed, $query)->willReturn(true);
 
         $storeItems = [
-            new Item('1', 1, [$source1]),
-            new Item('2', 2, [$source2]),
-            new Item('3', 3, [$source2]),
-            new Item('4', 4, [$source2]),
+            $this->createItem('1', 1, [$source1]),
+            $this->createItem('2', 2, [$source2]),
+            $this->createItem('3', 3, [$source2]),
+            $this->createItem('4', 4, [$source2]),
         ];
         $finalItems = [
             $storeItems[1],

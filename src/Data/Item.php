@@ -4,76 +4,32 @@ declare(strict_types=1);
 
 namespace RebelCode\Iris\Data;
 
-/** @psalm-immutable */
-class Item extends ImmutableDataObject
+/**
+ * Represents a fetched and/or stored item.
+ */
+interface Item
 {
-    /** @var string */
-    public $id;
-
-    /** @var int|string|null */
-    public $localId;
-
-    /** @var Source[] */
-    public $sources;
-
     /**
-     * Constructor.
+     * Retrieves the ID that uniquely identifies the item from other items from the same source.
      *
-     * @param string $id An ID that uniquely identifies the item from other items from the same source.
-     * @param int|string|null $localId The ID of the item in local storage.
-     * @param Source[] $sources The sources from which the item was fetched.
-     * @param array<string, mixed> $data The data for this item.
+     * @psalm-mutation-free
+     * @return string The item ID.
      */
-    public function __construct(string $id, $localId, array $sources, array $data = [])
-    {
-        parent::__construct($data);
-        $this->id = $id;
-        $this->localId = $localId;
-        $this->sources = array_values($sources);
-    }
+    public function getId(): string;
 
     /**
-     * @param int|string|null $localId
+     * Retrieves the ID of the item in persistent local storage.
+     *
+     * @psalm-mutation-free
+     * @return int|string|null The local ID, or null if the item has not been stored yet.
      */
-    public function withLocalId($localId): Item
-    {
-        if ($this->localId === $localId) {
-            return $this;
-        }
-
-        $clone = clone $this;
-        $clone->localId = $localId;
-
-        return $clone;
-    }
+    public function getLocalId();
 
     /**
-     * @param Source[] $sources
+     * Retrieves the sources from which the item was fetched.
+     *
+     * @psalm-mutation-free
+     * @return Source[] A numerically indexes list of sources.
      */
-    public function withSources(array $sources): Item
-    {
-        $sources = array_values($sources);
-
-        if ($this->sources === $sources) {
-            return $this;
-        }
-
-        $clone = clone $this;
-        $clone->sources = $sources;
-
-        return $clone;
-    }
-
-    /**
-     * @param Source[] $sources
-     */
-    public function withAddedSources(array $sources): Item
-    {
-        $newSources = [];
-        foreach (array_merge($this->sources, $sources) as $source) {
-            $newSources[(string) $source] = $source;
-        }
-
-        return $this->withSources($newSources);
-    }
+    public function getSources(): array;
 }

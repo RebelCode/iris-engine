@@ -28,27 +28,27 @@ class CompositeItemProcessorTest extends TestCase
         $query = $this->createMock(StoreQuery::class);
 
         $items = [
-            new Item('1', 1, []),
-            new Item('2', 2, []),
-            new Item('3', 3, []),
-            new Item('4', 4, []),
+            $this->createMock(Item::class),
+            $this->createMock(Item::class),
+            $this->createMock(Item::class),
+            $this->createMock(Item::class),
         ];
 
         $itemsAfterP1 = [
-            new Item('1', 1, []),
-            new Item('2', 2, []),
-            new Item('3', 3, []),
+            $this->createMock(Item::class),
+            $this->createMock(Item::class),
+            $this->createMock(Item::class),
         ];
 
         $itemsAfterP2 = [
-            new Item('1', 1, []),
-            new Item('3', 3, []),
+            $this->createMock(Item::class),
+            $this->createMock(Item::class),
         ];
 
         $itemsAfterP3 = [
-            new Item('1', 1, []),
-            new Item('3', 3, []),
-            new Item('9', 9, []),
+            $this->createMock(Item::class),
+            $this->createMock(Item::class),
+            $this->createMock(Item::class),
         ];
 
         $p1->expects($this->once())->method('process')->with($items, $feed, $query)->willReturn($itemsAfterP1);

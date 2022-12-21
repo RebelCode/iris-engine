@@ -17,7 +17,7 @@ interface Store
      *
      * @param Item[] $items The items to insert.
      * @param int $mode The mode. See {@link Store::THROW_ON_FAIL} and {@link Store::IGNORE_FAIL}.
-     * @return StoreResult The result, containing the same items but with updated {@link Item::$localId} fields.
+     * @return StoreResult The result, containing the same items but with updated local ID fields.
      *
      * @throws StoreException If an error occurred.
      */

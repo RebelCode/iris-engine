@@ -11,9 +11,9 @@ class StoreResultTest extends TestCase
     public function testGetItems()
     {
         $items = [
-            new Item('1', 1, []),
-            new Item('2', 2, []),
-            new Item('3', 3, []),
+            $this->createMock(Item::class),
+            $this->createMock(Item::class),
+            $this->createMock(Item::class),
         ];
 
         $result = new StoreResult($items);
@@ -24,9 +24,9 @@ class StoreResultTest extends TestCase
     public function testGetGenerator()
     {
         $items = [
-            new Item('1', 1, []),
-            new Item('2', 2, []),
-            new Item('3', 3, []),
+            $this->createMock(Item::class),
+            $this->createMock(Item::class),
+            $this->createMock(Item::class),
         ];
 
         $result = new StoreResult($items);
@@ -37,9 +37,9 @@ class StoreResultTest extends TestCase
     public function provideDataForGetFirstTest(): array
     {
         $items = [
-            new Item('1', 1, []),
-            new Item('2', 2, []),
-            new Item('3', 3, []),
+            $this->createMock(Item::class),
+            $this->createMock(Item::class),
+            $this->createMock(Item::class),
         ];
 
         return [
@@ -59,9 +59,9 @@ class StoreResultTest extends TestCase
     public function testGetMap()
     {
         $items = [
-            new Item('1', 1, []),
-            new Item('2', 2, []),
-            new Item('3', 3, []),
+            $this->createConfiguredMock(Item::class, ['getId' => '1']),
+            $this->createConfiguredMock(Item::class, ['getId' => '2']),
+            $this->createConfiguredMock(Item::class, ['getId' => '3']),
         ];
 
         $expected = [
@@ -78,15 +78,15 @@ class StoreResultTest extends TestCase
     public function provideDataForGetItem(): array
     {
         $items = [
-            new Item('1', 1, []),
-            new Item('2', 2, []),
-            new Item('3', 3, []),
+            $this->createConfiguredMock(Item::class, ['getId' => '1']),
+            $this->createConfiguredMock(Item::class, ['getId' => '2']),
+            $this->createConfiguredMock(Item::class, ['getId' => '3']),
         ];
 
         return [
             'empty list' => [[], '1', null],
             'valid id' => [$items, '2', $items[1]],
-            'invalid id' => [$items, '4', null,],
+            'invalid id' => [$items, '4', null],
         ];
     }
 

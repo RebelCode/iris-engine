@@ -66,7 +66,7 @@ class StoreResult
             $this->mapCache = [];
 
             foreach ($this->items as $item) {
-                $this->mapCache[$item->id] = $item;
+                $this->mapCache[$item->getId()] = $item;
             }
         }
 

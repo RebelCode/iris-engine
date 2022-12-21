@@ -108,7 +108,7 @@ class Engine
     public function convert(array $items): array
     {
         $itemIds = array_map(function (Item $item) {
-            return $item->id;
+            return $item->getId();
         }, $items);
 
         $existingMap = $this->store->query(StoreQuery::forIds($itemIds))->getMap();
@@ -117,7 +117,7 @@ class Engine
 
         $convertedItems = [];
         foreach ($items as $item) {
-            $existing = $existingMap[$item->id] ?? null;
+            $existing = $existingMap[$item->getId()] ?? null;
 
             try {
                 $item = $this->converter->convert($item);
