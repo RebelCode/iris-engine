@@ -114,7 +114,7 @@ class StoreQuery
     public static function forSources(array $sources): self
     {
         $sourceIds = array_map(function (Source $source) {
-            return $source->id;
+            return $source->getId();
         }, $sources);
 
         return new self(new Expression(Field::source(), Expression::IN, $sourceIds));

@@ -4,38 +4,25 @@ declare(strict_types=1);
 
 namespace RebelCode\Iris\Data;
 
-/** @psalm-immutable */
-class Source extends ImmutableDataObject
+/**
+ * Represents a source of data, to which fetched items can be attributed to. It is also used as a token to select the
+ * appropriate item source, such as database, API, file, etc.
+ */
+interface Source
 {
-    /** @var string */
-    public $id;
-
-    /** @var string */
-    public $type;
+    /**
+     * Retrieves the ID of the source, which uniquely identifies it from other sources of the same type.
+     *
+     * @psalm-mutation-free
+     * @return string The source ID.
+     */
+    public function getId(): string;
 
     /**
-     * Constructor.
+     * Retrieves the type of the source, which is an indicator of how the source should be used.
      *
-     * @param string $id An ID that uniquely identifies this source from other sources of the same type.
-     * @param string $type A string that categorizes the source.
-     * @param array<string, mixed> $data Optional additional data for this source, such as meta info or config.
+     * @psalm-mutation-free
+     * @return string The source type.
      */
-    public function __construct(string $id, string $type, array $data = [])
-    {
-        parent::__construct($data);
-        $this->id = $id;
-        $this->type = $type;
-    }
-
-    public static function fromString(string $string): Source
-    {
-        $parts = explode('||', $string);
-
-        return new Source($parts[0] ?? '', $parts[1] ?? '');
-    }
-
-    public function __toString(): string
-    {
-        return $this->id . '||' . $this->type;
-    }
+    public function getType(): string;
 }

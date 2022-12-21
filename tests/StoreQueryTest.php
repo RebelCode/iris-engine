@@ -53,9 +53,9 @@ class StoreQueryTest extends TestCase
     public function testCreateForSources()
     {
         $sources = [
-            new Source('id1', 'type1'),
-            new Source('id2', 'type2'),
-            new Source('id3', 'type3'),
+            $this->createConfiguredMock(Source::class, ['getId' => 'id1']),
+            $this->createConfiguredMock(Source::class, ['getId' => 'id2']),
+            $this->createConfiguredMock(Source::class, ['getId' => 'id3']),
         ];
 
         $query = StoreQuery::forSources($sources);

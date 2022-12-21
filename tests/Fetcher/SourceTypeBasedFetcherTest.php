@@ -33,7 +33,7 @@ class SourceTypeBasedFetcherTest extends TestCase
 
     public function testQuery()
     {
-        $source = new Source('test_source', 'foo');
+        $source = $this->createConfiguredMock(Source::class, ['getType' => 'foo']);
         $cursor = 'cursor';
         $count = 10;
 
@@ -55,7 +55,7 @@ class SourceTypeBasedFetcherTest extends TestCase
 
     public function testQueryUnknownFetcher()
     {
-        $source = new Source('test_source', 'baz');
+        $source = $this->createConfiguredMock(Source::class, ['getType' => 'baz']);
         $cursor = 'cursor';
         $count = 10;
 
@@ -74,7 +74,7 @@ class SourceTypeBasedFetcherTest extends TestCase
 
     public function testQueryDefault()
     {
-        $source = new Source('test_source', 'baz');
+        $source = $this->createConfiguredMock(Source::class, ['getType' => 'baz']);
         $cursor = 'cursor';
         $count = 10;
 

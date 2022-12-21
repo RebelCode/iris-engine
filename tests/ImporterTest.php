@@ -62,7 +62,7 @@ class ImporterTest extends TestCase
         $this->expect(false, $interrupt, 'create');
         $this->expect(!$isLocked, $interrupt, 'delete');
 
-        $source = new Source('test', 'type');
+        $source = $this->createConfiguredMock(Source::class, ['getId' => 'test']);
         $query = new FetchQuery($source);
         $nextQuery = $hasNext ? new FetchQuery($source) : null;
 
@@ -119,9 +119,9 @@ class ImporterTest extends TestCase
     public function testImportForSource(bool $hasNext)
     {
         $sources = [
-            $source1 = new Source('test1', 'type'),
-            $source2 = new Source('test2', 'type'),
-            $source3 = new Source('test3', 'type'),
+            $source1 = $this->createConfiguredMock(Source::class, ['getId' => 'test1']),
+            $source2 = $this->createConfiguredMock(Source::class, ['getId' => 'test2']),
+            $source3 = $this->createConfiguredMock(Source::class, ['getId' => 'test3']),
         ];
 
         $queries = [

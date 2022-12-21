@@ -36,11 +36,12 @@ class SourceTypeBasedFetcher implements Fetcher
     /** @inheritDoc */
     public function query(Source $source, ?string $cursor = null, ?int $count = null): FetchResult
     {
-        $fetcher = $this->map[$source->type] ?? $this->default;
+        $type = $source->getType();
+        $fetcher = $this->map[$type] ?? $this->default;
 
         if ($fetcher === null) {
             return new FetchResult([], $source, null, null, null, [
-                'No suitable fetcher found for source type "' . $source->type . '"',
+                'No suitable fetcher found for source type "' . $type . '"',
             ]);
         } else {
             return $fetcher->query($source, $cursor, $count);
