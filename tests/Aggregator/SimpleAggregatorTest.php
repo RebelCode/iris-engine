@@ -39,10 +39,13 @@ class SimpleAggregatorTest extends TestCase
 
     public function testGetFeedQuery(): void
     {
-        $feed = new Feed(1, [
-            $this->createConfiguredMock(Source::class, ['getId' => 'foo']),
-            $this->createConfiguredMock(Source::class, ['getId' => 'bar']),
+        $feed = $this->createConfiguredMock(Feed::class, [
+            'getSources' => [
+                $this->createConfiguredMock(Source::class, ['getId' => 'foo']),
+                $this->createConfiguredMock(Source::class, ['getId' => 'bar']),
+            ]
         ]);
+
         $count = 10;
         $offset = 5;
 
@@ -58,10 +61,13 @@ class SimpleAggregatorTest extends TestCase
 
     public function testGetFeedQueryManualPagination(): void
     {
-        $feed = new Feed(1, [
-            $this->createConfiguredMock(Source::class, ['getId' => 'foo']),
-            $this->createConfiguredMock(Source::class, ['getId' => 'bar']),
+        $feed = $this->createConfiguredMock(Feed::class, [
+            'getSources' => [
+                $this->createConfiguredMock(Source::class, ['getId' => 'foo']),
+                $this->createConfiguredMock(Source::class, ['getId' => 'bar']),
+            ]
         ]);
+
         $count = 10;
         $offset = 5;
 

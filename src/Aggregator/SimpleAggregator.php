@@ -28,7 +28,7 @@ class SimpleAggregator implements Aggregator
     /** @inheritDoc */
     public function getFeedQuery(Feed $feed, ?int $count = null, int $offset = 0): ?StoreQuery
     {
-        $query = StoreQuery::forSources($feed->sources);
+        $query = StoreQuery::forSources($feed->getSources());
 
         if ($this->doManualPagination) {
             return $query;
